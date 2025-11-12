@@ -1,4 +1,7 @@
+class_name Spr;
+
 extends RigidBody2D;
+
 
 signal on_grabbed;
 signal on_dropped;

@@ -1,8 +1,8 @@
 extends Node2D
 
 var _spr_grab_offset: Vector2;
-var _current_spr: RigidBody2D; 
-var _hovering_spr: RigidBody2D; 
+var _current_spr: Spr; 
+var _hovering_spr: Spr; 
 var _has_interacting_spr: bool = false;
 var _mouse_position: Vector2;
 
@@ -26,7 +26,7 @@ func check_hovering(mousePosition: Vector2) -> void:
 	var result = state.intersect_point(query);
 	if result:
 		for collision in result:
-			if collision.collider is RigidBody2D:
+			if collision.collider is Spr:
 				_hovering_spr = collision.collider;
 				return;
 	_hovering_spr = null;
@@ -39,7 +39,7 @@ func try_pickup() -> void:
 		if _hovering_spr.can_pickup():
 			grab(_hovering_spr);
 
-func grab(spr: RigidBody2D):
+func grab(spr: Spr):
 	if spr.has_method('notify_grabbed'):
 		spr.notify_grabbed();
 	_current_spr = spr;

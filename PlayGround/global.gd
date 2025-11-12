@@ -47,7 +47,7 @@ func create_world_boundary(size: Vector2) -> void:
 
 	add_child(area);
 
-func is_in_play_ground(spr: Node2D):
+func is_in_play_ground(spr: Spr):
 	var size = get_window().size;
 	var pos = spr.global_position;
 	if pos.x < -_thick or pos.x > size.x + _thick \
@@ -55,7 +55,7 @@ func is_in_play_ground(spr: Node2D):
 		return false;
 	return true;
 
-func respawn(spr: RigidBody2D):
+func respawn(spr: Spr):
 	var size = get_window().size;
 	spr.freeze = true;
 	spr.freeze_mode = RigidBody2D.FREEZE_MODE_STATIC
