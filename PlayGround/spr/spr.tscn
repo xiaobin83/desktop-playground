@@ -1,23 +1,23 @@
-[gd_scene load_steps=4 format=3 uid="uid://t0gu80p6xof2"]
+[gd_scene load_steps=5 format=3 uid="uid://t0gu80p6xof2"]
 
 [ext_resource type="Texture2D" uid="uid://csdmxgdop0npi" path="res://icon.svg" id="1_h5orq"]
-[ext_resource type="Script" uid="uid://4poer2umieni" path="res://PlayGround/registerPassingThroughOnHovering.gd" id="2_jyi3o"]
+[ext_resource type="Script" uid="uid://8b36vip2t07a" path="res://PlayGround/spr/spr.gd" id="1_jyi3o"]
+
+[sub_resource type="PhysicsMaterial" id="PhysicsMaterial_h5orq"]
+bounce = 0.2
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_fspg8"]
 size = Vector2(125, 125)
 
-[node name="Spr" type="Node2D"]
+[node name="Spr" type="RigidBody2D"]
+input_pickable = true
+physics_material_override = SubResource("PhysicsMaterial_h5orq")
+freeze_mode = 1
+continuous_cd = 2
+script = ExtResource("1_jyi3o")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 texture = ExtResource("1_h5orq")
 
-[node name="RegisterPassingThroughOnHovering" type="Node" parent="."]
-script = ExtResource("2_jyi3o")
-
-[node name="Area2D" type="Area2D" parent="."]
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("RectangleShape2D_fspg8")
-
-[connection signal="mouse_entered" from="Area2D" to="RegisterPassingThroughOnHovering" method="_on_area_2d_mouse_entered"]
-[connection signal="mouse_exited" from="Area2D" to="RegisterPassingThroughOnHovering" method="_on_area_2d_mouse_exit"]

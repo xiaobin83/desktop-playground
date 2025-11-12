@@ -18,6 +18,7 @@ config/icon="res://icon.svg"
 [autoload]
 
 Global="*res://PlayGround/global.tscn"
+PlayerInput="*res://PlayGround/input/player_input.gd"
 
 [display]
 
@@ -26,7 +27,12 @@ window/size/resizable=false
 window/size/borderless=true
 window/size/always_on_top=true
 window/size/transparent=true
+window/size/no_focus=true
 window/per_pixel_transparency/allowed=true
+
+[physics]
+
+common/physics_ticks_per_second=90
 
 [rendering]
 
