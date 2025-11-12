@@ -11,3 +11,7 @@ func notify_grabbed() -> void:
     
 func notify_dropped() -> void:
     emit_signal('on_dropped');
+
+func _process(_delta: float) -> void:
+    if !Global.is_in_play_ground(self):
+        Global.respawn(self)

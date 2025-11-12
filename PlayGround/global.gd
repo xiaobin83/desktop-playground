@@ -46,3 +46,21 @@ func create_world_boundary(size: Vector2) -> void:
 	area.add_child(collision);
 
 	add_child(area);
+
+func is_in_play_ground(spr: Node2D):
+	var size = get_window().size;
+	var pos = spr.global_position;
+	if pos.x < -_thick or pos.x > size.x + _thick \
+		or pos.y < -_thick or pos.y > size.y + _thick:
+		return false;
+	return true;
+
+func respawn(spr: RigidBody2D):
+	var size = get_window().size;
+	spr.freeze = true;
+	spr.freeze_mode = RigidBody2D.FREEZE_MODE_STATIC
+	await get_tree().create_timer(1).timeout
+	spr.global_position = Vector2(size.x / 2, size.y / 2);
+	spr.linear_velocity = Vector2.ZERO;
+	spr.angular_velocity = 0;
+	spr.freeze = false;
