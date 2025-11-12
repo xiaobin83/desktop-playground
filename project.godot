@@ -17,7 +17,7 @@ config/icon="res://icon.svg"
 
 [autoload]
 
-Global="*res://PlayGround/global.gd"
+Global="*res://PlayGround/global.tscn"
 
 [display]
 
@@ -26,13 +26,11 @@ window/size/resizable=false
 window/size/borderless=true
 window/size/always_on_top=true
 window/size/transparent=true
-window/size/no_focus=true
-window/size/minimize_disabled=true
-window/size/maximize_disabled=true
 window/per_pixel_transparency/allowed=true
 
 [rendering]
 
 renderer/rendering_method="gl_compatibility"
 renderer/rendering_method.mobile="gl_compatibility"
+textures/vram_compression/import_etc2_astc=true
 environment/defaults/default_clear_color=Color(0.3019608, 0.3019608, 0.3019608, 0)

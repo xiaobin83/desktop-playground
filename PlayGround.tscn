@@ -7,3 +7,4 @@
 [node name="Node2D" type="Node2D" parent="."]
 
 [node name="Spr" parent="Node2D" instance=ExtResource("1_fspg8")]
+position = Vector2(186, 223)
