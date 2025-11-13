@@ -6,8 +6,11 @@ signal on_grabbed;
 signal on_dropped;
 
 func _ready() -> void:
-	# find all eyes and notify them, it can be nested
-	pass
+	var spr_components = get_tree().get_nodes_in_group('spr_components')
+	for comp in spr_components:
+		print(comp.name)
+		if comp.has_method('notify_spr_initialized'):
+			comp.notify_spr_initialized(self)
 
 func can_pickup() -> bool:
 	return true

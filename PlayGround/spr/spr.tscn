@@ -1,9 +1,11 @@
-[gd_scene load_steps=7 format=3 uid="uid://t0gu80p6xof2"]
+[gd_scene load_steps=9 format=3 uid="uid://t0gu80p6xof2"]
 
 [ext_resource type="Texture2D" uid="uid://csdmxgdop0npi" path="res://icon.svg" id="1_h5orq"]
 [ext_resource type="Script" uid="uid://8b36vip2t07a" path="res://PlayGround/spr/spr.gd" id="1_jyi3o"]
 [ext_resource type="Texture2D" uid="uid://dt02h1ikoj8t7" path="res://PlayGround/spr/assets/circle_16px.png" id="3_jyi3o"]
 [ext_resource type="Script" uid="uid://ddeyy3ayrhxt8" path="res://PlayGround/spr/eyes.gd" id="3_lq046"]
+[ext_resource type="Script" uid="uid://sxskp3qvw713" path="res://PlayGround/spr/jet_engine.gd" id="5_ekpyy"]
+[ext_resource type="Script" uid="uid://ddnwhe48pjykq" path="res://PlayGround/spr/randome_engine_controller.gd" id="5_jyl2l"]
 
 [sub_resource type="PhysicsMaterial" id="PhysicsMaterial_h5orq"]
 bounce = 0.2
@@ -21,7 +23,7 @@ script = ExtResource("1_jyi3o")
 [node name="Head" type="Sprite2D" parent="."]
 texture = ExtResource("1_h5orq")
 
-[node name="Eyes" type="Node2D" parent="Head" node_paths=PackedStringArray("_left_eye", "_right_eye")]
+[node name="Eyes" type="Node2D" parent="Head" node_paths=PackedStringArray("_left_eye", "_right_eye") groups=["spr_components"]]
 script = ExtResource("3_lq046")
 _left_eye = NodePath("LeftEye")
 _right_eye = NodePath("RightEye")
@@ -35,6 +37,34 @@ texture = ExtResource("3_jyi3o")
 position = Vector2(20.999998, 1)
 scale = Vector2(1.3599977, 1.3599977)
 texture = ExtResource("3_jyi3o")
+
+[node name="EngineController" type="Node2D" parent="Head" groups=["spr_components"]]
+script = ExtResource("5_jyl2l")
+_durationMin = 2.0
+_durationMax = 5.0
+
+[node name="JetEngine" type="Node2D" parent="Head/EngineController" groups=["spr_components"]]
+position = Vector2(25, 50)
+script = ExtResource("5_ekpyy")
+_force = 2500.0
+
+[node name="JetEngine2" type="Node2D" parent="Head/EngineController" groups=["spr_components"]]
+position = Vector2(-50, 25)
+rotation = 1.5707964
+script = ExtResource("5_ekpyy")
+_force = 2500.0
+
+[node name="JetEngine3" type="Node2D" parent="Head/EngineController" groups=["spr_components"]]
+position = Vector2(50, -25)
+rotation = -1.5707964
+script = ExtResource("5_ekpyy")
+_force = 2500.0
+
+[node name="JetEngine4" type="Node2D" parent="Head/EngineController" groups=["spr_components"]]
+position = Vector2(-25, -50)
+rotation = 3.1415927
+script = ExtResource("5_ekpyy")
+_force = 2500.0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 visible = false

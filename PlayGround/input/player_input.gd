@@ -9,16 +9,16 @@ var _mouse_position: Vector2;
 func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventMouse:
 		_mouse_position = event.position;
-		check_hovering(event.position)
+		_check_hovering(event.position)
 
 	if event is InputEventMouseButton:
 		if event.button_index == MOUSE_BUTTON_LEFT: 
 			if event.pressed:
-				try_pickup();
+				_try_pickup();
 			elif event.is_released():
-				drop();
+				_drop();
 
-func check_hovering(mousePosition: Vector2) -> void:
+func _check_hovering(mousePosition: Vector2) -> void:
 	var state = get_world_2d().direct_space_state;
 	var query = PhysicsPointQueryParameters2D.new();
 	query.position = mousePosition;
@@ -31,15 +31,15 @@ func check_hovering(mousePosition: Vector2) -> void:
 				return;
 	_hovering_spr = null;
 
-func try_pickup() -> void:
+func _try_pickup() -> void:
 	if _current_spr != null:
 		return;
 	
 	if _hovering_spr != null and _hovering_spr.has_method('can_pickup'):
 		if _hovering_spr.can_pickup():
-			grab(_hovering_spr);
+			_grab(_hovering_spr);
 
-func grab(spr: Spr):
+func _grab(spr: Spr):
 	if spr.has_method('notify_grabbed'):
 		spr.notify_grabbed();
 	_current_spr = spr;
@@ -47,10 +47,10 @@ func grab(spr: Spr):
 	_current_spr.freeze = true
 	_current_spr.freeze_mode = RigidBody2D.FREEZE_MODE_KINEMATIC;
 
-func drop() -> void:
+func _drop() -> void:
 	if _current_spr != null:
-		if _current_spr.has_method('notify_released'):
-			_current_spr.notify_released();
+		if _current_spr.has_method('notify_dropped'):
+			_current_spr.notify_dropped();
 		_current_spr.freeze = false
 		_current_spr = null;
 
