@@ -1,7 +1,9 @@
-[gd_scene load_steps=5 format=3 uid="uid://t0gu80p6xof2"]
+[gd_scene load_steps=7 format=3 uid="uid://t0gu80p6xof2"]
 
 [ext_resource type="Texture2D" uid="uid://csdmxgdop0npi" path="res://icon.svg" id="1_h5orq"]
 [ext_resource type="Script" uid="uid://8b36vip2t07a" path="res://PlayGround/spr/spr.gd" id="1_jyi3o"]
+[ext_resource type="Texture2D" uid="uid://dt02h1ikoj8t7" path="res://PlayGround/spr/assets/circle_16px.png" id="3_jyi3o"]
+[ext_resource type="Script" uid="uid://ddeyy3ayrhxt8" path="res://PlayGround/spr/eyes.gd" id="3_lq046"]
 
 [sub_resource type="PhysicsMaterial" id="PhysicsMaterial_h5orq"]
 bounce = 0.2
@@ -16,8 +18,24 @@ freeze_mode = 1
 continuous_cd = 2
 script = ExtResource("1_jyi3o")
 
-[node name="Sprite2D" type="Sprite2D" parent="."]
+[node name="Head" type="Sprite2D" parent="."]
 texture = ExtResource("1_h5orq")
 
+[node name="Eyes" type="Node2D" parent="Head" node_paths=PackedStringArray("_left_eye", "_right_eye")]
+script = ExtResource("3_lq046")
+_left_eye = NodePath("LeftEye")
+_right_eye = NodePath("RightEye")
+
+[node name="LeftEye" type="Sprite2D" parent="Head/Eyes"]
+position = Vector2(-22.000002, 1)
+scale = Vector2(1.3599977, 1.3599977)
+texture = ExtResource("3_jyi3o")
+
+[node name="RightEye" type="Sprite2D" parent="Head/Eyes"]
+position = Vector2(20.999998, 1)
+scale = Vector2(1.3599977, 1.3599977)
+texture = ExtResource("3_jyi3o")
+
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+visible = false
 shape = SubResource("RectangleShape2D_fspg8")
