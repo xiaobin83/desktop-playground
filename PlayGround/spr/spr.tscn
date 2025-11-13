@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=3 uid="uid://t0gu80p6xof2"]
+[gd_scene load_steps=10 format=3 uid="uid://t0gu80p6xof2"]
 
 [ext_resource type="Texture2D" uid="uid://csdmxgdop0npi" path="res://icon.svg" id="1_h5orq"]
 [ext_resource type="Script" uid="uid://8b36vip2t07a" path="res://PlayGround/spr/spr.gd" id="1_jyi3o"]
@@ -6,6 +6,7 @@
 [ext_resource type="Script" uid="uid://ddeyy3ayrhxt8" path="res://PlayGround/spr/eyes.gd" id="3_lq046"]
 [ext_resource type="Script" uid="uid://sxskp3qvw713" path="res://PlayGround/spr/jet_engine.gd" id="5_ekpyy"]
 [ext_resource type="Script" uid="uid://ddnwhe48pjykq" path="res://PlayGround/spr/randome_engine_controller.gd" id="5_jyl2l"]
+[ext_resource type="Texture2D" uid="uid://c1ktu3xcj5ly7" path="res://PlayGround/spr/assets/circle_8px.png" id="7_kcen7"]
 
 [sub_resource type="PhysicsMaterial" id="PhysicsMaterial_h5orq"]
 bounce = 0.2
@@ -43,28 +44,44 @@ script = ExtResource("5_jyl2l")
 _durationMin = 2.0
 _durationMax = 5.0
 
-[node name="JetEngine" type="Node2D" parent="Head/EngineController" groups=["spr_components"]]
+[node name="JetEngine" type="Node2D" parent="Head/EngineController" node_paths=PackedStringArray("_engine_light") groups=["spr_components"]]
 position = Vector2(25, 50)
 script = ExtResource("5_ekpyy")
 _force = 2500.0
+_engine_light = NodePath("Sprite2D")
 
-[node name="JetEngine2" type="Node2D" parent="Head/EngineController" groups=["spr_components"]]
+[node name="Sprite2D" type="Sprite2D" parent="Head/EngineController/JetEngine"]
+texture = ExtResource("7_kcen7")
+
+[node name="JetEngine2" type="Node2D" parent="Head/EngineController" node_paths=PackedStringArray("_engine_light") groups=["spr_components"]]
 position = Vector2(-50, 25)
 rotation = 1.5707964
 script = ExtResource("5_ekpyy")
 _force = 2500.0
+_engine_light = NodePath("Sprite2D")
 
-[node name="JetEngine3" type="Node2D" parent="Head/EngineController" groups=["spr_components"]]
+[node name="Sprite2D" type="Sprite2D" parent="Head/EngineController/JetEngine2"]
+texture = ExtResource("7_kcen7")
+
+[node name="JetEngine3" type="Node2D" parent="Head/EngineController" node_paths=PackedStringArray("_engine_light") groups=["spr_components"]]
 position = Vector2(50, -25)
 rotation = -1.5707964
 script = ExtResource("5_ekpyy")
 _force = 2500.0
+_engine_light = NodePath("Sprite2D")
 
-[node name="JetEngine4" type="Node2D" parent="Head/EngineController" groups=["spr_components"]]
+[node name="Sprite2D" type="Sprite2D" parent="Head/EngineController/JetEngine3"]
+texture = ExtResource("7_kcen7")
+
+[node name="JetEngine4" type="Node2D" parent="Head/EngineController" node_paths=PackedStringArray("_engine_light") groups=["spr_components"]]
 position = Vector2(-25, -50)
 rotation = 3.1415927
 script = ExtResource("5_ekpyy")
 _force = 2500.0
+_engine_light = NodePath("Sprite2D")
+
+[node name="Sprite2D" type="Sprite2D" parent="Head/EngineController/JetEngine4"]
+texture = ExtResource("7_kcen7")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 visible = false
