@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=3 uid="uid://t0gu80p6xof2"]
+[gd_scene load_steps=11 format=3 uid="uid://t0gu80p6xof2"]
 
 [ext_resource type="Texture2D" uid="uid://csdmxgdop0npi" path="res://icon.svg" id="1_h5orq"]
 [ext_resource type="Script" uid="uid://8b36vip2t07a" path="res://PlayGround/spr/spr.gd" id="1_jyi3o"]
@@ -7,6 +7,7 @@
 [ext_resource type="Script" uid="uid://sxskp3qvw713" path="res://PlayGround/spr/components/jet_engine.gd" id="5_ekpyy"]
 [ext_resource type="Script" uid="uid://ddnwhe48pjykq" path="res://PlayGround/spr/components/randome_engine_controller.gd" id="5_jyl2l"]
 [ext_resource type="Texture2D" uid="uid://dll75tmmuxdfe" path="res://PlayGround/spr/assets/triangle_8px.png" id="7_0ouna"]
+[ext_resource type="Script" uid="uid://bqt0c8s7ej8xd" path="res://PlayGround/spr/components/counter.gd" id="8_0ouna"]
 
 [sub_resource type="PhysicsMaterial" id="PhysicsMaterial_h5orq"]
 bounce = 0.2
@@ -86,6 +87,9 @@ _engine_light = NodePath("Sprite2D")
 [node name="Sprite2D" type="Sprite2D" parent="Head/EngineController/JetEngine4"]
 rotation = 3.1415927
 texture = ExtResource("7_0ouna")
+
+[node name="Counter" type="Node" parent="Head" groups=["spr_components"]]
+script = ExtResource("8_0ouna")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 visible = false
