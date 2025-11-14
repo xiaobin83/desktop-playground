@@ -3,9 +3,9 @@ extends Node2D
 @export var _durationMin: float
 @export var _durationMax: float
 
-var _spr: Spr 
+var _spr: Spr
 var _engines: Array[Node2D] = []
-var _cooldown: Cooldown 
+var _cooldown: Cooldown
 
 func notify_spr_initialized(spr: Spr) -> void:
 	_spr = spr
@@ -46,5 +46,3 @@ func _on_grabbed() -> void:
 func _on_dropped() -> void:
 	_cooldown.resume()
 	pass
-
-

@@ -3,9 +3,9 @@
 [ext_resource type="Texture2D" uid="uid://csdmxgdop0npi" path="res://icon.svg" id="1_h5orq"]
 [ext_resource type="Script" uid="uid://8b36vip2t07a" path="res://PlayGround/spr/spr.gd" id="1_jyi3o"]
 [ext_resource type="Texture2D" uid="uid://dt02h1ikoj8t7" path="res://PlayGround/spr/assets/circle_16px.png" id="3_jyi3o"]
-[ext_resource type="Script" uid="uid://ddeyy3ayrhxt8" path="res://PlayGround/spr/eyes.gd" id="3_lq046"]
-[ext_resource type="Script" uid="uid://sxskp3qvw713" path="res://PlayGround/spr/jet_engine.gd" id="5_ekpyy"]
-[ext_resource type="Script" uid="uid://ddnwhe48pjykq" path="res://PlayGround/spr/randome_engine_controller.gd" id="5_jyl2l"]
+[ext_resource type="Script" uid="uid://ddeyy3ayrhxt8" path="res://PlayGround/spr/components/eyes.gd" id="3_lq046"]
+[ext_resource type="Script" uid="uid://sxskp3qvw713" path="res://PlayGround/spr/components/jet_engine.gd" id="5_ekpyy"]
+[ext_resource type="Script" uid="uid://ddnwhe48pjykq" path="res://PlayGround/spr/components/randome_engine_controller.gd" id="5_jyl2l"]
 [ext_resource type="Texture2D" uid="uid://dll75tmmuxdfe" path="res://PlayGround/spr/assets/triangle_8px.png" id="7_0ouna"]
 
 [sub_resource type="PhysicsMaterial" id="PhysicsMaterial_h5orq"]
