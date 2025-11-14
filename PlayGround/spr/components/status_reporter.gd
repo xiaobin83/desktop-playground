@@ -15,6 +15,7 @@ func _ready() -> void:
 	_cooldown = Cooldown.new(randf_range(_durationMin, _durationMax))
 
 func _on_spr_grabbed() -> void:
+	_report()
 	_spr.get_counter().reset_rolling_count();
 	_cooldown.pause()
 
@@ -23,8 +24,6 @@ func _on_spr_dropped() -> void:
 
 func _report() -> void:
 	var count = _spr.get_counter().get_rolling_count()
-	if count == 0: return
-
 	var speak_bubble = ObjectPool.allocate("res://PlayGround/ui_widgets/speak_bubble.tscn", 3)
 	speak_bubble.set_content("%d次翻滚!" % count)
 	get_tree().root.add_child(speak_bubble)

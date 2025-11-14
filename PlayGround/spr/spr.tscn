@@ -95,6 +95,8 @@ script = ExtResource("8_0ouna")
 
 [node name="StatusReporter" type="Node2D" parent="Head" groups=["spr_components"]]
 script = ExtResource("9_2ps75")
+_durationMin = 30.0
+_durationMax = 180.0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 visible = false
