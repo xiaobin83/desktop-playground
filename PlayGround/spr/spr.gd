@@ -10,11 +10,7 @@ signal on_dropped;
 var _is_grabbed: bool = false;
 
 func _ready() -> void:
-	var spr_components = get_tree().get_nodes_in_group('spr_components')
-	for comp in spr_components:
-		print(comp.name)
-		if comp.has_method('notify_spr_initialized'):
-			comp.notify_spr_initialized(self)
+	NodeExt.call_in_children(self, 'notify_spr_initialized', self)
 
 func is_grabbed() -> bool:
 	return _is_grabbed

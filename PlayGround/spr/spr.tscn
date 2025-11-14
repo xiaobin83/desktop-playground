@@ -27,7 +27,7 @@ _counter = NodePath("Head/Counter")
 [node name="Head" type="Sprite2D" parent="."]
 texture = ExtResource("1_h5orq")
 
-[node name="Eyes" type="Node2D" parent="Head" node_paths=PackedStringArray("_left_eye", "_right_eye") groups=["spr_components"]]
+[node name="Eyes" type="Node2D" parent="Head" node_paths=PackedStringArray("_left_eye", "_right_eye")]
 script = ExtResource("3_lq046")
 _left_eye = NodePath("LeftEye")
 _right_eye = NodePath("RightEye")
@@ -42,12 +42,12 @@ position = Vector2(20.999998, 1)
 scale = Vector2(1.3599977, 1.3599977)
 texture = ExtResource("3_jyi3o")
 
-[node name="EngineController" type="Node2D" parent="Head" groups=["spr_components"]]
+[node name="EngineController" type="Node2D" parent="Head"]
 script = ExtResource("5_jyl2l")
 _durationMin = 2.0
 _durationMax = 5.0
 
-[node name="JetEngine" type="Node2D" parent="Head/EngineController" node_paths=PackedStringArray("_engine_light") groups=["spr_components"]]
+[node name="JetEngine" type="Node2D" parent="Head/EngineController" node_paths=PackedStringArray("_engine_light")]
 position = Vector2(25, 50)
 script = ExtResource("5_ekpyy")
 _force = 2500.0
@@ -57,7 +57,7 @@ _engine_light = NodePath("Sprite2D")
 rotation = 3.1415927
 texture = ExtResource("7_0ouna")
 
-[node name="JetEngine2" type="Node2D" parent="Head/EngineController" node_paths=PackedStringArray("_engine_light") groups=["spr_components"]]
+[node name="JetEngine2" type="Node2D" parent="Head/EngineController" node_paths=PackedStringArray("_engine_light")]
 position = Vector2(-50, 25)
 rotation = 1.5707964
 script = ExtResource("5_ekpyy")
@@ -68,7 +68,7 @@ _engine_light = NodePath("Sprite2D")
 rotation = 3.1415927
 texture = ExtResource("7_0ouna")
 
-[node name="JetEngine3" type="Node2D" parent="Head/EngineController" node_paths=PackedStringArray("_engine_light") groups=["spr_components"]]
+[node name="JetEngine3" type="Node2D" parent="Head/EngineController" node_paths=PackedStringArray("_engine_light")]
 position = Vector2(50, -25)
 rotation = -1.5707964
 script = ExtResource("5_ekpyy")
@@ -79,7 +79,7 @@ _engine_light = NodePath("Sprite2D")
 rotation = 3.1415927
 texture = ExtResource("7_0ouna")
 
-[node name="JetEngine4" type="Node2D" parent="Head/EngineController" node_paths=PackedStringArray("_engine_light") groups=["spr_components"]]
+[node name="JetEngine4" type="Node2D" parent="Head/EngineController" node_paths=PackedStringArray("_engine_light")]
 position = Vector2(-25, -50)
 rotation = 3.1415927
 script = ExtResource("5_ekpyy")
@@ -90,10 +90,10 @@ _engine_light = NodePath("Sprite2D")
 rotation = 3.1415927
 texture = ExtResource("7_0ouna")
 
-[node name="Counter" type="Node" parent="Head" groups=["spr_components"]]
+[node name="Counter" type="Node" parent="Head"]
 script = ExtResource("8_0ouna")
 
-[node name="StatusReporter" type="Node2D" parent="Head" groups=["spr_components"]]
+[node name="StatusReporter" type="Node2D" parent="Head"]
 script = ExtResource("9_2ps75")
 _durationMin = 30.0
 _durationMax = 180.0
