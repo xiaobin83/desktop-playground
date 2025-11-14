@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=3 uid="uid://t0gu80p6xof2"]
+[gd_scene load_steps=12 format=3 uid="uid://t0gu80p6xof2"]
 
 [ext_resource type="Texture2D" uid="uid://csdmxgdop0npi" path="res://icon.svg" id="1_h5orq"]
 [ext_resource type="Script" uid="uid://8b36vip2t07a" path="res://PlayGround/spr/spr.gd" id="1_jyi3o"]
@@ -8,6 +8,7 @@
 [ext_resource type="Script" uid="uid://ddnwhe48pjykq" path="res://PlayGround/spr/components/randome_engine_controller.gd" id="5_jyl2l"]
 [ext_resource type="Texture2D" uid="uid://dll75tmmuxdfe" path="res://PlayGround/spr/assets/triangle_8px.png" id="7_0ouna"]
 [ext_resource type="Script" uid="uid://bqt0c8s7ej8xd" path="res://PlayGround/spr/components/counter.gd" id="8_0ouna"]
+[ext_resource type="Script" uid="uid://b2lnd1fn2sfn7" path="res://PlayGround/spr/components/status_reporter.gd" id="9_2ps75"]
 
 [sub_resource type="PhysicsMaterial" id="PhysicsMaterial_h5orq"]
 bounce = 0.2
@@ -15,12 +16,13 @@ bounce = 0.2
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_fspg8"]
 size = Vector2(125, 125)
 
-[node name="Spr" type="RigidBody2D"]
+[node name="Spr" type="RigidBody2D" node_paths=PackedStringArray("_counter")]
 input_pickable = true
 physics_material_override = SubResource("PhysicsMaterial_h5orq")
 freeze_mode = 1
 continuous_cd = 2
 script = ExtResource("1_jyi3o")
+_counter = NodePath("Head/Counter")
 
 [node name="Head" type="Sprite2D" parent="."]
 texture = ExtResource("1_h5orq")
@@ -90,6 +92,9 @@ texture = ExtResource("7_0ouna")
 
 [node name="Counter" type="Node" parent="Head" groups=["spr_components"]]
 script = ExtResource("8_0ouna")
+
+[node name="StatusReporter" type="Node2D" parent="Head" groups=["spr_components"]]
+script = ExtResource("9_2ps75")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 visible = false

@@ -1,7 +1,7 @@
 class_name Cooldown
 
 var _time: float
-var _passed_time: float 
+var _passed_time: float
 var _paused: bool = false
 
 func _init(time: float):
@@ -14,6 +14,7 @@ func get_time():
 func reset(time: float):
 	_time = time
 	_passed_time = 0
+	resume()
 
 func pause() -> void:
 	_paused = true

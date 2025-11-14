@@ -1,0 +1,31 @@
+[gd_scene load_steps=2 format=3 uid="uid://to3i0cv3ynus"]
+
+[ext_resource type="Script" uid="uid://cvfn264i4jtqh" path="res://PlayGround/ui_widgets/speak_bubble.gd" id="1_amu6t"]
+
+[node name="SpeakBubble" type="Node2D" node_paths=PackedStringArray("_label")]
+script = ExtResource("1_amu6t")
+_label = NodePath("ColorRect/Label")
+
+[node name="ColorRect" type="ColorRect" parent="."]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -40.0
+offset_top = -10.0
+offset_right = 40.0
+offset_bottom = 10.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Label" type="Label" parent="ColorRect"]
+modulate = Color(0.08468992, 0.08468992, 0.08468992, 1)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "10次翻滚"
+horizontal_alignment = 1
