@@ -2,15 +2,19 @@ extends Node
 
 @export var _thick : float = 10.0;
 
+var _item_spawner: Callable
+
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	var window = get_window();
-	window.mouse_passthrough = true;
-	create_world_boundary(window.size);
-
+	var window = get_window()
+	if not OS.has_feature('windows'):
+		window.mouse_passthrough = true
+	create_world_boundary(window.size)
 
 func create_world_boundary(size: Vector2) -> void:
 	var area = StaticBody2D.new();
+	area.collision_layer = ~0
+	area.collision_mask = 0
 
 	# up
 	var collision = CollisionShape2D.new();
@@ -64,3 +68,29 @@ func respawn(spr: Spr):
 	spr.linear_velocity = Vector2.ZERO;
 	spr.angular_velocity = 0;
 	spr.freeze = false;
+
+func set_item_spawner(callable: Callable) -> void:
+	_item_spawner = callable
+
+func spawn_item(item: PackedScene, item_global_position :Vector2) -> Item:
+	assert(_item_spawner, "no spawner provided")
+	return _item_spawner.call(item, item_global_position) as Item;
+
+func spawn_item_at_random_position(item: PackedScene) -> Item:
+	assert(_item_spawner, "no spawner provided")
+	return _item_spawner.call(item, get_random_position())
+
+func get_random_position() -> Vector2:
+	var size = get_window().size
+	var x = randf_range(0, size.x)
+	var y = randf_range(0, size.y)
+	return Vector2(x, y)
+
+func get_size() -> Vector2:
+	return get_window().size
+
+func clamp(point: Vector2) -> Vector2:
+	var size = get_window().size
+	var x = clampf(point.x, _thick, size.x - _thick)
+	var y = clampf(point.y, _thick, size.y - _thick)
+	return Vector2(x, y)

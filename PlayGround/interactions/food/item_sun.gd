@@ -1,0 +1,36 @@
+class_name ItemSun
+extends Item
+
+@export var _energy := 1.0
+@export var _energy_consuming_speed := 0.1
+@export var radius := 300.0
+
+@onready var _collision_shape := $CollisionShape2D
+
+var _current_energy: float
+
+func _ready() -> void:
+	_current_energy = _energy
+	if _collision_shape.shape is CircleShape2D:
+		_collision_shape.shape.radius = radius
+
+func woke_up_from_pool() -> void:
+	_current_energy = _energy
+
+func consume(delta: float) -> Dictionary:
+	var amount = _energy_consuming_speed * delta
+	_current_energy -= amount
+	if _current_energy <= 0.0:
+		amount += _current_energy
+		despawn()
+		return _make_consume_ret(amount, true) 
+	return _make_consume_ret(amount, false)
+
+func get_endurance() -> float:
+	return _current_energy / _energy
+
+func _get_extra_obs() -> Array[float]:
+	return [radius, 0, 0, 0]
+
+func get_item_type() -> Items.Type:
+	return Items.Type.Sun

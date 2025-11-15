@@ -1,0 +1,64 @@
+[gd_scene load_steps=12 format=3 uid="uid://chcorhp6qu3o2"]
+
+[ext_resource type="Script" uid="uid://cfafjsd0go3jn" path="res://PlayGround/play_ground_controller.gd" id="1_cetvj"]
+[ext_resource type="Script" uid="uid://cdb83l77exutg" path="res://PlayGround/igm/igm_controller.gd" id="2_4uc4s"]
+[ext_resource type="Script" uid="uid://b6dewq6dvu121" path="res://PlayGround/interactions/spawn_item.gd" id="3_wr70o"]
+[ext_resource type="PackedScene" uid="uid://fj5y3saakpda" path="res://PlayGround/interactions/food/item_food.tscn" id="4_lvb1l"]
+[ext_resource type="PackedScene" uid="uid://d31c1vifk7jc4" path="res://PlayGround/interactions/food/food_visual.tscn" id="5_wydcw"]
+[ext_resource type="PackedScene" uid="uid://cqd6cvpl8o41k" path="res://PlayGround/interactions/food/item_sun.tscn" id="6_yrsq0"]
+[ext_resource type="PackedScene" uid="uid://bq6q0361e2p2o" path="res://PlayGround/interactions/food/sun_visual.tscn" id="7_ppryc"]
+[ext_resource type="PackedScene" uid="uid://t0gu80p6xof2" path="res://PlayGround/spr/spr.tscn" id="8_8be8s"]
+[ext_resource type="Script" uid="uid://cf35a7eopjxtw" path="res://addons/godot_rl_agents/sync.gd" id="9_0g4to"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_krv6v"]
+size = Vector2(100, 100)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_uf7cv"]
+
+[node name="PlayGround" type="Node"]
+script = ExtResource("1_cetvj")
+_collision_layer = 1
+_collision_mask = 2147483649
+
+[node name="IGM" type="Node2D" parent="."]
+
+[node name="IGMController" type="Node" parent="IGM" node_paths=PackedStringArray("_igm_options")]
+script = ExtResource("2_4uc4s")
+_igm_options = NodePath("../IGMOptions")
+
+[node name="IGMArea" type="Area2D" parent="IGM"]
+position = Vector2(-51, -51)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="IGM/IGMArea"]
+shape = SubResource("RectangleShape2D_krv6v")
+
+[node name="IGMOptions" type="Node2D" parent="IGM"]
+
+[node name="Spawner Food" type="Area2D" parent="IGM/IGMOptions"]
+position = Vector2(-51, -78)
+script = ExtResource("3_wr70o")
+_item = ExtResource("4_lvb1l")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="IGM/IGMOptions/Spawner Food"]
+shape = SubResource("RectangleShape2D_uf7cv")
+
+[node name="FoodVisual" parent="IGM/IGMOptions/Spawner Food" instance=ExtResource("5_wydcw")]
+
+[node name="Spawner Sun" type="Area2D" parent="IGM/IGMOptions"]
+position = Vector2(-52, -42)
+script = ExtResource("3_wr70o")
+_item = ExtResource("6_yrsq0")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="IGM/IGMOptions/Spawner Sun"]
+shape = SubResource("RectangleShape2D_uf7cv")
+
+[node name="SunVisual" parent="IGM/IGMOptions/Spawner Sun" node_paths=PackedStringArray("_item") instance=ExtResource("7_ppryc")]
+_item = NodePath("..")
+
+[node name="Spr" parent="." instance=ExtResource("8_8be8s")]
+position = Vector2(186, 223)
+
+[node name="Sync" type="Node" parent="."]
+script = ExtResource("9_0g4to")
+control_mode = 2
+onnx_model_path = "res://PlayGround/a_step.onnx"
