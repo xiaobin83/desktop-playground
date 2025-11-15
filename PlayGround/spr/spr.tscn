@@ -23,6 +23,11 @@ freeze_mode = 1
 continuous_cd = 2
 script = ExtResource("1_jyi3o")
 _counter = NodePath("Head/Counter")
+_engine_controller = ExtResource("5_jyl2l")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+visible = false
+shape = SubResource("RectangleShape2D_fspg8")
 
 [node name="Head" type="Sprite2D" parent="."]
 texture = ExtResource("1_h5orq")
@@ -42,54 +47,6 @@ position = Vector2(20.999998, 1)
 scale = Vector2(1.3599977, 1.3599977)
 texture = ExtResource("3_jyi3o")
 
-[node name="EngineController" type="Node2D" parent="Head"]
-script = ExtResource("5_jyl2l")
-_durationMin = 2.0
-_durationMax = 5.0
-
-[node name="JetEngine" type="Node2D" parent="Head/EngineController" node_paths=PackedStringArray("_engine_light")]
-position = Vector2(25, 50)
-script = ExtResource("5_ekpyy")
-_force = 2500.0
-_engine_light = NodePath("Sprite2D")
-
-[node name="Sprite2D" type="Sprite2D" parent="Head/EngineController/JetEngine"]
-rotation = 3.1415927
-texture = ExtResource("7_0ouna")
-
-[node name="JetEngine2" type="Node2D" parent="Head/EngineController" node_paths=PackedStringArray("_engine_light")]
-position = Vector2(-50, 25)
-rotation = 1.5707964
-script = ExtResource("5_ekpyy")
-_force = 2500.0
-_engine_light = NodePath("Sprite2D")
-
-[node name="Sprite2D" type="Sprite2D" parent="Head/EngineController/JetEngine2"]
-rotation = 3.1415927
-texture = ExtResource("7_0ouna")
-
-[node name="JetEngine3" type="Node2D" parent="Head/EngineController" node_paths=PackedStringArray("_engine_light")]
-position = Vector2(50, -25)
-rotation = -1.5707964
-script = ExtResource("5_ekpyy")
-_force = 2500.0
-_engine_light = NodePath("Sprite2D")
-
-[node name="Sprite2D" type="Sprite2D" parent="Head/EngineController/JetEngine3"]
-rotation = 3.1415927
-texture = ExtResource("7_0ouna")
-
-[node name="JetEngine4" type="Node2D" parent="Head/EngineController" node_paths=PackedStringArray("_engine_light")]
-position = Vector2(-25, -50)
-rotation = 3.1415927
-script = ExtResource("5_ekpyy")
-_force = 2500.0
-_engine_light = NodePath("Sprite2D")
-
-[node name="Sprite2D" type="Sprite2D" parent="Head/EngineController/JetEngine4"]
-rotation = 3.1415927
-texture = ExtResource("7_0ouna")
-
 [node name="Counter" type="Node" parent="Head"]
 script = ExtResource("8_0ouna")
 
@@ -98,6 +55,47 @@ script = ExtResource("9_2ps75")
 _durationMin = 30.0
 _durationMax = 180.0
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-visible = false
-shape = SubResource("RectangleShape2D_fspg8")
+[node name="EngineController" type="Node2D" parent="."]
+
+[node name="down" type="Node2D" parent="EngineController" node_paths=PackedStringArray("_engine_light")]
+position = Vector2(25, 50)
+script = ExtResource("5_ekpyy")
+_force = 2500.0
+_engine_light = NodePath("Sprite2D")
+
+[node name="Sprite2D" type="Sprite2D" parent="EngineController/down"]
+rotation = 3.1415927
+texture = ExtResource("7_0ouna")
+
+[node name="left" type="Node2D" parent="EngineController" node_paths=PackedStringArray("_engine_light")]
+position = Vector2(-50, 25)
+rotation = 1.5707964
+script = ExtResource("5_ekpyy")
+_force = 2500.0
+_engine_light = NodePath("Sprite2D")
+
+[node name="Sprite2D" type="Sprite2D" parent="EngineController/left"]
+rotation = 3.1415927
+texture = ExtResource("7_0ouna")
+
+[node name="right" type="Node2D" parent="EngineController" node_paths=PackedStringArray("_engine_light")]
+position = Vector2(50, -25)
+rotation = -1.5707964
+script = ExtResource("5_ekpyy")
+_force = 2500.0
+_engine_light = NodePath("Sprite2D")
+
+[node name="Sprite2D" type="Sprite2D" parent="EngineController/right"]
+rotation = 3.1415927
+texture = ExtResource("7_0ouna")
+
+[node name="up" type="Node2D" parent="EngineController" node_paths=PackedStringArray("_engine_light")]
+position = Vector2(-25, -50)
+rotation = 3.1415927
+script = ExtResource("5_ekpyy")
+_force = 2500.0
+_engine_light = NodePath("Sprite2D")
+
+[node name="Sprite2D" type="Sprite2D" parent="EngineController/up"]
+rotation = 3.1415927
+texture = ExtResource("7_0ouna")

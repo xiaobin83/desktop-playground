@@ -8,3 +8,10 @@ static func _call_in_children(node: Node, method: StringName, args: Array) -> vo
 		if child.has_method(method):
 			child.callv(method, args) 
 		_call_in_children(child, method, args) 
+
+static func fits(node: Node, interface: Array) -> bool:
+	for method in interface:
+		if not node.has_method(method):
+			return false 
+	return true 
+
