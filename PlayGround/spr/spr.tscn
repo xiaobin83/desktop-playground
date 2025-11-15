@@ -1,14 +1,16 @@
-[gd_scene load_steps=12 format=3 uid="uid://t0gu80p6xof2"]
+[gd_scene load_steps=14 format=3 uid="uid://t0gu80p6xof2"]
 
 [ext_resource type="Texture2D" uid="uid://csdmxgdop0npi" path="res://icon.svg" id="1_h5orq"]
 [ext_resource type="Script" uid="uid://8b36vip2t07a" path="res://PlayGround/spr/spr.gd" id="1_jyi3o"]
 [ext_resource type="Texture2D" uid="uid://dt02h1ikoj8t7" path="res://PlayGround/spr/assets/circle_16px.png" id="3_jyi3o"]
 [ext_resource type="Script" uid="uid://ddeyy3ayrhxt8" path="res://PlayGround/spr/components/eyes.gd" id="3_lq046"]
 [ext_resource type="Script" uid="uid://sxskp3qvw713" path="res://PlayGround/spr/components/jet_engine.gd" id="5_ekpyy"]
-[ext_resource type="Script" uid="uid://ddnwhe48pjykq" path="res://PlayGround/spr/components/randome_engine_controller.gd" id="5_jyl2l"]
 [ext_resource type="Texture2D" uid="uid://dll75tmmuxdfe" path="res://PlayGround/spr/assets/triangle_8px.png" id="7_0ouna"]
 [ext_resource type="Script" uid="uid://bqt0c8s7ej8xd" path="res://PlayGround/spr/components/counter.gd" id="8_0ouna"]
 [ext_resource type="Script" uid="uid://b2lnd1fn2sfn7" path="res://PlayGround/spr/components/status_reporter.gd" id="9_2ps75"]
+[ext_resource type="Script" uid="uid://dqmkueg4irwo2" path="res://addons/godot_rl_agents/sensors/sensors_2d/RaycastSensor2D.gd" id="9_bv1ud"]
+[ext_resource type="Script" uid="uid://bc51d3ddd8u7p" path="res://PlayGround/spr/components/hybrid_engine_controller.gd" id="9_bvbw8"]
+[ext_resource type="Script" uid="uid://cu86afh6c5fg2" path="res://PlayGround/spr/components/ai_agent.gd" id="10_2rfar"]
 
 [sub_resource type="PhysicsMaterial" id="PhysicsMaterial_h5orq"]
 bounce = 0.2
@@ -21,8 +23,20 @@ input_pickable = true
 physics_material_override = SubResource("PhysicsMaterial_h5orq")
 freeze_mode = 1
 continuous_cd = 2
+angular_damp = 0.5
 script = ExtResource("1_jyi3o")
 _counter = NodePath("Head/Counter")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_fspg8")
+
+[node name="AIAgent" type="Node2D" parent="." groups=["AGENT"]]
+script = ExtResource("10_2rfar")
+reset_after = 4000
+metadata/_custom_type_script = "uid://cu86afh6c5fg2"
+
+[node name="Sensor" type="Node2D" parent="."]
+script = ExtResource("9_bv1ud")
 
 [node name="Head" type="Sprite2D" parent="."]
 texture = ExtResource("1_h5orq")
@@ -42,54 +56,6 @@ position = Vector2(20.999998, 1)
 scale = Vector2(1.3599977, 1.3599977)
 texture = ExtResource("3_jyi3o")
 
-[node name="EngineController" type="Node2D" parent="Head"]
-script = ExtResource("5_jyl2l")
-_durationMin = 2.0
-_durationMax = 5.0
-
-[node name="JetEngine" type="Node2D" parent="Head/EngineController" node_paths=PackedStringArray("_engine_light")]
-position = Vector2(25, 50)
-script = ExtResource("5_ekpyy")
-_force = 2500.0
-_engine_light = NodePath("Sprite2D")
-
-[node name="Sprite2D" type="Sprite2D" parent="Head/EngineController/JetEngine"]
-rotation = 3.1415927
-texture = ExtResource("7_0ouna")
-
-[node name="JetEngine2" type="Node2D" parent="Head/EngineController" node_paths=PackedStringArray("_engine_light")]
-position = Vector2(-50, 25)
-rotation = 1.5707964
-script = ExtResource("5_ekpyy")
-_force = 2500.0
-_engine_light = NodePath("Sprite2D")
-
-[node name="Sprite2D" type="Sprite2D" parent="Head/EngineController/JetEngine2"]
-rotation = 3.1415927
-texture = ExtResource("7_0ouna")
-
-[node name="JetEngine3" type="Node2D" parent="Head/EngineController" node_paths=PackedStringArray("_engine_light")]
-position = Vector2(50, -25)
-rotation = -1.5707964
-script = ExtResource("5_ekpyy")
-_force = 2500.0
-_engine_light = NodePath("Sprite2D")
-
-[node name="Sprite2D" type="Sprite2D" parent="Head/EngineController/JetEngine3"]
-rotation = 3.1415927
-texture = ExtResource("7_0ouna")
-
-[node name="JetEngine4" type="Node2D" parent="Head/EngineController" node_paths=PackedStringArray("_engine_light")]
-position = Vector2(-25, -50)
-rotation = 3.1415927
-script = ExtResource("5_ekpyy")
-_force = 2500.0
-_engine_light = NodePath("Sprite2D")
-
-[node name="Sprite2D" type="Sprite2D" parent="Head/EngineController/JetEngine4"]
-rotation = 3.1415927
-texture = ExtResource("7_0ouna")
-
 [node name="Counter" type="Node" parent="Head"]
 script = ExtResource("8_0ouna")
 
@@ -98,6 +64,86 @@ script = ExtResource("9_2ps75")
 _durationMin = 30.0
 _durationMax = 180.0
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-visible = false
-shape = SubResource("RectangleShape2D_fspg8")
+[node name="Label" type="Label" parent="Head"]
+custom_minimum_size = Vector2(0, 5)
+anchors_preset = 10
+anchor_right = 1.0
+offset_left = -64.0
+offset_top = -36.0
+offset_right = -64.0
+offset_bottom = -12.0
+grow_horizontal = 2
+text = "GROUP 0"
+horizontal_alignment = 1
+
+[node name="FuelBar" type="ProgressBar" parent="Head"]
+offset_left = -51.0
+offset_top = 17.0
+offset_right = -47.0
+offset_bottom = 44.0
+max_value = 1.0
+value = 0.5
+fill_mode = 3
+show_percentage = false
+
+[node name="EngineController" type="Node2D" parent="."]
+script = ExtResource("9_bvbw8")
+
+[node name="down" type="Node2D" parent="EngineController" node_paths=PackedStringArray("_engine_light")]
+position = Vector2(25, 50)
+script = ExtResource("5_ekpyy")
+_force = 2500.0
+_engine_light = NodePath("Sprite2D")
+
+[node name="Sprite2D" type="Sprite2D" parent="EngineController/down"]
+rotation = 3.1415927
+texture = ExtResource("7_0ouna")
+
+[node name="down2" type="Node2D" parent="EngineController" node_paths=PackedStringArray("_engine_light")]
+position = Vector2(-25, 50)
+script = ExtResource("5_ekpyy")
+_force = 2500.0
+_engine_light = NodePath("Sprite2D")
+
+[node name="Sprite2D" type="Sprite2D" parent="EngineController/down2"]
+rotation = 3.1415927
+texture = ExtResource("7_0ouna")
+
+[node name="left" type="Node2D" parent="EngineController" node_paths=PackedStringArray("_engine_light")]
+position = Vector2(-50, -10)
+rotation = 1.5707964
+script = ExtResource("5_ekpyy")
+_force = 2500.0
+_engine_light = NodePath("Sprite2D")
+
+[node name="Sprite2D" type="Sprite2D" parent="EngineController/left"]
+rotation = 3.1415927
+texture = ExtResource("7_0ouna")
+
+[node name="right" type="Node2D" parent="EngineController" node_paths=PackedStringArray("_engine_light")]
+position = Vector2(50, -10)
+rotation = -1.5707964
+script = ExtResource("5_ekpyy")
+_force = 2500.0
+_engine_light = NodePath("Sprite2D")
+
+[node name="Sprite2D" type="Sprite2D" parent="EngineController/right"]
+rotation = 3.1415927
+texture = ExtResource("7_0ouna")
+
+[node name="up" type="Node2D" parent="EngineController" node_paths=PackedStringArray("_engine_light")]
+position = Vector2(0, -50)
+rotation = 3.1415927
+script = ExtResource("5_ekpyy")
+_force = 2500.0
+_engine_light = NodePath("Sprite2D")
+
+[node name="Sprite2D" type="Sprite2D" parent="EngineController/up"]
+rotation = 3.1415927
+texture = ExtResource("7_0ouna")
+
+[node name="AlignmentLight" type="ColorRect" parent="."]
+offset_left = 51.0
+offset_top = 17.0
+offset_right = 55.0
+offset_bottom = 44.0

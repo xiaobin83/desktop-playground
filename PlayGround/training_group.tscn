@@ -1,0 +1,44 @@
+[gd_scene load_steps=4 format=3 uid="uid://bqau31qi4urdg"]
+
+[ext_resource type="Script" uid="uid://cf35a7eopjxtw" path="res://addons/godot_rl_agents/sync.gd" id="1_kct4e"]
+[ext_resource type="PackedScene" uid="uid://8biidbt3m0lp" path="res://PlayGround/training_instance.tscn" id="2_d0iar"]
+[ext_resource type="Script" uid="uid://d3t3fyuj5utod" path="res://PlayGround/utils/agent_status_client.gd" id="3_wb00j"]
+
+[node name="Training Group" type="Node"]
+
+[node name="TrainingInstance1" parent="." instance=ExtResource("2_d0iar")]
+
+[node name="TrainingInstance2" parent="." instance=ExtResource("2_d0iar")]
+_collision_layer = 2
+_collision_mask = 2
+
+[node name="TrainingInstance3" parent="." instance=ExtResource("2_d0iar")]
+_collision_layer = 4
+_collision_mask = 4
+
+[node name="TrainingInstance4" parent="." instance=ExtResource("2_d0iar")]
+_collision_layer = 8
+_collision_mask = 8
+
+[node name="TrainingInstance5" parent="." instance=ExtResource("2_d0iar")]
+_collision_layer = 16
+_collision_mask = 16
+
+[node name="TrainingInstance6" parent="." instance=ExtResource("2_d0iar")]
+_collision_layer = 32
+_collision_mask = 32
+
+[node name="TrainingInstance7" parent="." instance=ExtResource("2_d0iar")]
+_collision_layer = 64
+_collision_mask = 64
+
+[node name="TrainingInstance8" parent="." instance=ExtResource("2_d0iar")]
+_collision_layer = 128
+_collision_mask = 128
+
+[node name="Sync" type="Node" parent="."]
+script = ExtResource("1_kct4e")
+speed_up = 8.0
+
+[node name="AgentStatusClient" type="Node" parent="."]
+script = ExtResource("3_wb00j")

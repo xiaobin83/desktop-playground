@@ -1,0 +1,24 @@
+[gd_scene load_steps=7 format=3 uid="uid://b11sd8a1clg7n"]
+
+[ext_resource type="Script" uid="uid://baueh67rt45ud" path="res://PlayGround/training_ground_controller.gd" id="1_gstvq"]
+[ext_resource type="PackedScene" uid="uid://fj5y3saakpda" path="res://PlayGround/interactions/food/item_food.tscn" id="3_5sjcd"]
+[ext_resource type="PackedScene" uid="uid://cqd6cvpl8o41k" path="res://PlayGround/interactions/food/item_sun.tscn" id="3_lv2yr"]
+[ext_resource type="Script" uid="uid://cf35a7eopjxtw" path="res://addons/godot_rl_agents/sync.gd" id="4_7t3th"]
+[ext_resource type="PackedScene" uid="uid://t0gu80p6xof2" path="res://PlayGround/spr/spr.tscn" id="5_ab366"]
+[ext_resource type="Script" uid="uid://d3t3fyuj5utod" path="res://PlayGround/utils/agent_status_client.gd" id="6_lv2yr"]
+
+[node name="TrainingGround" type="Node"]
+script = ExtResource("1_gstvq")
+_items = Array[PackedScene]([ExtResource("3_5sjcd"), ExtResource("3_lv2yr")])
+_collision_layer = 1
+_collision_mask = 1
+
+[node name="Spr" parent="." instance=ExtResource("5_ab366")]
+position = Vector2(186, 223)
+
+[node name="Sync" type="Node" parent="."]
+script = ExtResource("4_7t3th")
+speed_up = 8.0
+
+[node name="AgentStatusClient" type="Node" parent="."]
+script = ExtResource("6_lv2yr")
