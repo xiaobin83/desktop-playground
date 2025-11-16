@@ -8,7 +8,6 @@ func _ready() -> void:
 	window.mouse_passthrough = true;
 	create_world_boundary(window.size);
 
-
 func create_world_boundary(size: Vector2) -> void:
 	var area = StaticBody2D.new();
 

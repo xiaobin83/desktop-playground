@@ -24,7 +24,7 @@ func _on_spr_dropped() -> void:
 
 func _report() -> void:
 	var count = _spr.get_counter().get_rolling_count()
-	var speak_bubble = ObjectPool.allocate("res://PlayGround/ui_widgets/speak_bubble.tscn", 3)
+	var speak_bubble = ObjectPool.allocate_path("res://PlayGround/ui_widgets/speak_bubble.tscn", 3)
 	speak_bubble.set_content("%d次翻滚!" % count)
 	get_tree().root.add_child(speak_bubble)
 	speak_bubble.global_position = _spr.global_position + Vector2(0, -50)

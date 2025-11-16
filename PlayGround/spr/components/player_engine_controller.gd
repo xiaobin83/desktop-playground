@@ -6,8 +6,8 @@ var _eng_down
 var _eng_left
 var _eng_right
 
-func init_engine_controller() -> void:
-	super.init_engine_controller()
+func _ready() -> void:
+	super._ready()
 	var engines = get_engines()
 	for engine in engines:
 		match engine.name:

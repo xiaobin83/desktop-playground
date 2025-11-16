@@ -15,3 +15,8 @@ static func fits(node: Node, interface: Array) -> bool:
 			return false 
 	return true 
 
+static func foreach_child(node: Node, callable: Callable):
+	for child in node.get_children():
+		callable.call(child)
+		foreach_child(child, callable)
+

@@ -1,0 +1,47 @@
+[gd_scene load_steps=9 format=3 uid="uid://chcorhp6qu3o2"]
+
+[ext_resource type="Script" uid="uid://cdb83l77exutg" path="res://PlayGround/igm/igm_controller.gd" id="1_6hfcc"]
+[ext_resource type="Script" uid="uid://cfafjsd0go3jn" path="res://PlayGround/play_ground_controller.gd" id="1_b814l"]
+[ext_resource type="Script" uid="uid://b6dewq6dvu121" path="res://PlayGround/interactions/spawn_food.gd" id="2_b814l"]
+[ext_resource type="PackedScene" uid="uid://fj5y3saakpda" path="res://PlayGround/interactions/food/item_food.tscn" id="3_ghjgg"]
+[ext_resource type="PackedScene" uid="uid://d31c1vifk7jc4" path="res://PlayGround/interactions/food/food_visual.tscn" id="4_w6qss"]
+[ext_resource type="PackedScene" uid="uid://t0gu80p6xof2" path="res://PlayGround/spr/spr.tscn" id="5_s8byp"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_krv6v"]
+size = Vector2(100, 100)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_uf7cv"]
+
+[node name="PlayGround" type="Node"]
+script = ExtResource("1_b814l")
+
+[node name="IGM" type="Node2D" parent="."]
+
+[node name="IGMController" type="Node" parent="IGM" node_paths=PackedStringArray("_igm_options")]
+script = ExtResource("1_6hfcc")
+_igm_options = NodePath("../IGMOptions")
+
+[node name="IGMArea" type="Area2D" parent="IGM"]
+position = Vector2(-51, -51)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="IGM/IGMArea"]
+shape = SubResource("RectangleShape2D_krv6v")
+
+[node name="IGMOptions" type="Node2D" parent="IGM"]
+visible = false
+
+[node name="FoodSpawner" type="Area2D" parent="IGM/IGMOptions"]
+position = Vector2(-50, -51)
+script = ExtResource("2_b814l")
+_food = ExtResource("3_ghjgg")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="IGM/IGMOptions/FoodSpawner"]
+shape = SubResource("RectangleShape2D_uf7cv")
+
+[node name="FoodVisual" parent="IGM/IGMOptions/FoodSpawner" instance=ExtResource("4_w6qss")]
+
+[node name="Spr" parent="." instance=ExtResource("5_s8byp")]
+position = Vector2(186, 223)
+
+[node name="ItemFood" parent="." instance=ExtResource("3_ghjgg")]
+position = Vector2(1597, 560)
