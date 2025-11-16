@@ -59,6 +59,7 @@ _durationMax = 180.0
 
 [node name="AIAgent" type="Node2D" parent="EngineController" groups=["AGENT"]]
 script = ExtResource("10_2rfar")
+reset_after = 2000
 metadata/_custom_type_script = "uid://cu86afh6c5fg2"
 
 [node name="down" type="Node2D" parent="EngineController" node_paths=PackedStringArray("_engine_light")]

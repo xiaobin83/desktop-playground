@@ -1,13 +1,14 @@
 extends Node
 
-@export var _item_food:PackedScene
+@export var _item_food: PackedScene
 
 @onready var _spr :Spr = $Spr
+
+var _is_resetting: bool
 
 func _ready() -> void:
 	_spr.on_request_reset.connect(_on_spr_request_reset)
 	_spawn_food()
-
 
 func _spawn_food() -> void:
 	var item_food = ObjectPool.allocate_packed_scene(_item_food) as ItemFood
@@ -23,12 +24,15 @@ func _on_consume_food(item: Item) -> void:
 	item.on_consume.disconnect(_on_consume_food)
 	item.visible = false
 	ObjectPool.recycle(item)
-	_spawn_food()
+	if not _is_resetting: 
+		_spawn_food()
 
 func _on_spr_request_reset() -> void:
-	print("reset")
+	_is_resetting = true
 	Global.respawn(_spr)
 	var list = []
 	list.append_array(ItemFood.get_all_food_items())
 	for item in list:
 		item.consume()
+	_spawn_food()
+	_is_resetting = false

@@ -3,7 +3,7 @@ extends Item
 
 static var _all_foods = []
 
-func _ready() -> void:
+func wake_up_from_pool():
 	_all_foods.append(self)
 
 func consume() -> void:

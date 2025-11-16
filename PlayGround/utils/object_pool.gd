@@ -12,7 +12,7 @@ func allocate_packed_scene(packed_scene: PackedScene, recycle_time: float = -1) 
 	var instance: Node 
 	if list.size() > 0:
 		instance = list.pop_back()	
-		instance._ready()
+		instance.wake_up_from_pool()
 	else:
 		instance = packed_scene.instantiate()
 		instance.set_meta(meta_packed_scene, packed_scene)
@@ -27,7 +27,7 @@ func allocate_path(path: String, recycle_time: float = -1) -> Node:
 	var instance: Node = null
 	if list.size() > 0:
 		instance = list.pop_back()
-		instance._ready()
+		instance.wake_up_from_pool()
 	else:
 		var scene: PackedScene = load(path)
 		instance = scene.instantiate()
