@@ -4,19 +4,23 @@ extends AIController2D
 var _move_action := [0, 0, 0, 0, 0, 0]
 var is_success: bool = false
 
-const FOOD = &'FOOD'
+const ITEM = &'ITEM'
 
 func get_obs() -> Dictionary:
-	var obs = []
-	var food_items = get_tree().get_nodes_in_group(FOOD)
-	if food_items and food_items.size() > 0:
-		var item = food_items[0]
+	var obs :Array[float] = []
+	var items = get_tree().get_nodes_in_group(ITEM)
+	if items and items.size() > 0:
+		var item = items[0]
 		var local_pos = to_local(item.global_position)
-		obs.append(local_pos.x)
+		obs.append(1.0) # has item
+		obs.append(local_pos.x) # local pos 
 		obs.append(local_pos.y)
+		obs.append_array(Item.get_extra_obs(item))
 	else:
-		obs.append(-1)
-		obs.append(-1)
+		obs.append(0) # no item
+		obs.append(0) # no meaning 
+		obs.append(0)
+		obs.append_array(Item.get_default_extra_obs())
 
 	return {"obs": obs}
 

@@ -6,7 +6,7 @@
 [sub_resource type="CircleShape2D" id="CircleShape2D_8dmr4"]
 radius = 300.0
 
-[node name="ItemSun" type="Area2D" groups=["FOOD"]]
+[node name="ItemSun" type="Area2D" groups=["ITEM"]]
 script = ExtResource("1_mhyoo")
 
 [node name="SunVisual" parent="." node_paths=PackedStringArray("_item") instance=ExtResource("2_mhyoo")]

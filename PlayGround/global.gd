@@ -70,6 +70,12 @@ func set_item_spawner(callable: Callable) -> void:
 	_item_spawner = callable
 
 func spawn_item(item: PackedScene, item_global_position :Vector2) -> Item:
-	if _item_spawner != null:
-		return _item_spawner.call(item, item_global_position) as Item;
-	return null;
+	assert(_item_spawner, "no spawner provided")
+	return _item_spawner.call(item, item_global_position) as Item;
+
+func spawn_item_at_random_position(item: PackedScene) -> Item:
+	assert(_item_spawner, "no spawner provided")
+	var size = get_window().size
+	var x = randf_range(0, size.x)
+	var y = randf_range(0, size.y)
+	return _item_spawner.call(item, Vector2(x, y))
