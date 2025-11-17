@@ -9,6 +9,7 @@ var _engine_node
 
 signal on_grabbed
 signal on_dropped
+signal on_hovering
 
 # signal from agent
 signal on_agent_request_reset
@@ -22,7 +23,7 @@ var _is_grabbed: bool = false;
 var _touching_items = {}
 
 func _init() -> void:
-	assert(NodeExt.fits(self, Pickable.interface))
+	assert(NodeExt.has_methods(self, Pickable.interfaces))
 
 func _enter_tree() -> void:
 	_engine_node = $EngineController
@@ -49,7 +50,7 @@ func notify_dropped() -> void:
 	on_dropped.emit();
 
 func notify_hovering() -> void:
-	pass
+	on_hovering.emit()
 
 func get_counter() -> Node:
 	return _counter

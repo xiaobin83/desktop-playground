@@ -9,9 +9,15 @@ static func _call_in_children(node: Node, method: StringName, args: Array) -> vo
 			child.callv(method, args) 
 		_call_in_children(child, method, args) 
 
-static func fits(node: Node, interface: Array) -> bool:
-	for method in interface:
+static func has_methods(node: Node, methods: Array) -> bool:
+	for method in methods:
 		if not node.has_method(method):
+			return false 
+	return true 
+
+static func has_signals(node: Node, signals: Array) -> bool:
+	for sig in signals:
+		if not node.has_signal(sig):
 			return false 
 	return true 
 

@@ -3,6 +3,9 @@ extends Node2D
 
 signal on_consume(item: Item)
 
+func woke_up_from_pool() -> void:
+	pass
+
 func _on_body_entered(body: Node2D) -> void:
 	if body is Spr:
 		body.entered_item(self)

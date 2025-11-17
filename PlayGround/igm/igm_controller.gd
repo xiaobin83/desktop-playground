@@ -10,7 +10,7 @@ func _ready() -> void:
 	PlayerInput.on_exit_igm_area.connect(_on_exit_igm_area)
 	
 	NodeExt.foreach_child(_igm_options, \
-		func(child: Node2D):
+		func(child: Node):
 			if child is PickableMenuItem:
 				child.on_grabbed.connect(_on_grabbed_item.bind(child))
 				child.on_dropped.connect(_on_dropped_item.bind(child)))

@@ -11,7 +11,7 @@ func notify_spr_initialized(spr: Spr) -> void:
 
 func _ready() -> void:
 	for child in get_children():
-		if NodeExt.fits(child, _engine_interface):
+		if NodeExt.has_methods(child, _engine_interface):
 			_engines.append(child)
 
 func get_engines() -> Array:

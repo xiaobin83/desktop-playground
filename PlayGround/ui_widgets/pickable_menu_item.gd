@@ -3,12 +3,13 @@ extends Area2D
 
 signal on_grabbed
 signal on_dropped
+signal on_hovering
 
 var _initial_position :Vector2
 
 
 func _init() -> void:
-	assert(NodeExt.fits(self, Pickable.interface))
+	assert(NodeExt.has_methods(self, Pickable.interfaces))
 
 func _ready() -> void:
 	_initial_position = position 
@@ -24,4 +25,4 @@ func notify_dropped() -> void:
 	position = _initial_position
 
 func notify_hovering() -> void:
-	pass
+	on_hovering.emit()
