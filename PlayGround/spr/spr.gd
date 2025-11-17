@@ -66,7 +66,6 @@ func touch_item(item: Item) -> void:
 
 func _touch_item(item: Item) -> void:
 	on_touch_item.emit(item)
-	item.consume()
 
 func agent_raise_reward_changed(reward: float) -> void:
 	on_agent_reward_changed.emit(reward)
