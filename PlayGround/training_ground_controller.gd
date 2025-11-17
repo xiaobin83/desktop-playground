@@ -33,7 +33,7 @@ func _on_consume_item(item: Item) -> void:
 		_spawn_new_item += 1
 
 func _on_reward_changed(reward: float) -> void:
-	if reward > 1.0:
+	if reward >= 1.0:
 		_spr.set_agent_done(true)
 
 func _reset() -> void:
