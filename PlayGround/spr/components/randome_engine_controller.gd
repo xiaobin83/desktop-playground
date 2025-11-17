@@ -15,11 +15,12 @@ func _exit_tree() -> void:
 	_spr.on_grabbed.disconnect(_on_grabbed)
 	_spr.on_dropped.disconnect(_on_dropped)
 
-func process(delta: float) -> void:
+func _process(delta: float) -> void:
+	super._process(delta)
+
 	if _cooldown.process(delta):
 		_start_random_engine()
 		_cooldown.reset(randf_range(_durationMin, _durationMax))
-
 
 func _start_random_engine() -> void:
 	var size = get_engines().size();

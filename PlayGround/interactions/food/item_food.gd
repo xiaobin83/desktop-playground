@@ -4,5 +4,5 @@ extends Item
 func _ready() -> void:
 	pass
 
-func wake_up_from_pool() -> void:
+func woke_up_from_pool() -> void:
 	pass

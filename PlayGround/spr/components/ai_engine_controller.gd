@@ -16,6 +16,14 @@ func _process(_delta: float) -> void:
 		_spr.agent_request_reset()
 		return
 
+	var reward_changed = false
+	for item in _spr.get_touching_items():
+		_ai_agent.reward += 1.0
+		item.consume()
+		reward_changed = true
+	if reward_changed:
+		_spr.agent_raise_reward_changed(_ai_agent.reward)
+
 	var action = _ai_agent.get_move_action()
 	var engines = get_engines()
 	for i in range(action.size()):
@@ -23,11 +31,6 @@ func _process(_delta: float) -> void:
 
 func _op_engine(action: float, engine) -> void:
 	engine.start_engine(action)
-
-func _on_touch_item(item: Item) -> void:
-	_ai_agent.reward += 1.0
-	_spr.agent_raise_reward_changed(_ai_agent.reward)
-	super._on_touch_item(item)
 
 func _set_done(is_success: bool) -> void:
 	_ai_agent.is_success = is_success

@@ -1,6 +1,5 @@
 extends EngineController
 
-
 var _eng_up
 var _eng_down
 var _eng_left
@@ -16,7 +15,7 @@ func _ready() -> void:
 			"left": _eng_left = engine
 			"right": _eng_right = engine
 
-func process_unhandled_input(event: InputEvent) -> void:
+func _unhandled_input(event: InputEvent) -> void:
 	const long_time = 10000.0
 
 	if event.is_action_pressed("Up"):

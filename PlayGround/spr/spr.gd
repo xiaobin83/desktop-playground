@@ -9,7 +9,6 @@ var _engine_node
 
 signal on_grabbed
 signal on_dropped
-signal on_touch_item(item: Item)
 
 # signal from agent
 signal on_agent_request_reset
@@ -20,6 +19,7 @@ signal on_request_set_agent_done(is_success: bool)
 signal on_reset_agent
 
 var _is_grabbed: bool = false;
+var _touching_items = {}
 
 func _init() -> void:
 	assert(NodeExt.fits(self, Pickable.interface))
@@ -30,9 +30,6 @@ func _enter_tree() -> void:
 
 func _ready() -> void:
 	NodeExt.call_in_children(self, 'notify_spr_initialized', self)
-
-func _unhandled_input(event: InputEvent) -> void:
-	_engine_node.process_unhandled_input(event)
 
 func is_grabbed() -> bool:
 	return _is_grabbed
@@ -54,18 +51,17 @@ func notify_dropped() -> void:
 func notify_hovering() -> void:
 	pass
 
-func _process(delta: float) -> void:
-	_engine_node.process(delta)
-
 func get_counter() -> Node:
 	return _counter
 
-# in physics update
-func touch_item(item: Item) -> void:
-	call_deferred('_touch_item', item)
+func get_touching_items() -> Dictionary:
+	return _touching_items
 
-func _touch_item(item: Item) -> void:
-	on_touch_item.emit(item)
+func entered_item(item: Item) -> void:
+	_touching_items[item] = true
+
+func exited_item(item: Item) -> void:
+	_touching_items.erase(item)
 
 func agent_raise_reward_changed(reward: float) -> void:
 	on_agent_reward_changed.emit(reward)
