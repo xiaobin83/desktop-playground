@@ -3,7 +3,7 @@ class_name Spr;
 extends RigidBody2D;
 
 @export var _counter: Node
-@export var _engine_controller : GDScript 
+@export var _engine_controller : GDScript
 
 var _engine_node
 
@@ -11,7 +11,13 @@ signal on_grabbed
 signal on_dropped
 signal on_touch_item(item: Item)
 
-signal on_request_reset
+# signal from agent
+signal on_agent_request_reset
+signal on_agent_reward_changed(reward: float)
+
+# signal sent to agent
+signal on_request_set_agent_done(is_success: bool)
+signal on_reset_agent
 
 var _is_grabbed: bool = false;
 
@@ -62,5 +68,14 @@ func _touch_item(item: Item) -> void:
 	on_touch_item.emit(item)
 	item.consume()
 
-func request_reset() -> void:
-	on_request_reset.emit()
+func agent_raise_reward_changed(reward: float) -> void:
+	on_agent_reward_changed.emit(reward)
+
+func agent_request_reset() -> void:
+	on_agent_request_reset.emit()
+
+func set_agent_done(is_success: bool) -> void:
+	on_request_set_agent_done.emit(is_success)
+
+func reset_agent() -> void:
+	on_reset_agent.emit()
