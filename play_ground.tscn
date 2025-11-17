@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=3 uid="uid://chcorhp6qu3o2"]
+[gd_scene load_steps=11 format=3 uid="uid://chcorhp6qu3o2"]
 
 [ext_resource type="Script" uid="uid://cdb83l77exutg" path="res://PlayGround/igm/igm_controller.gd" id="1_6hfcc"]
 [ext_resource type="Script" uid="uid://cfafjsd0go3jn" path="res://PlayGround/play_ground_controller.gd" id="1_b814l"]
@@ -6,6 +6,8 @@
 [ext_resource type="PackedScene" uid="uid://fj5y3saakpda" path="res://PlayGround/interactions/food/item_food.tscn" id="3_ghjgg"]
 [ext_resource type="PackedScene" uid="uid://d31c1vifk7jc4" path="res://PlayGround/interactions/food/food_visual.tscn" id="4_w6qss"]
 [ext_resource type="PackedScene" uid="uid://t0gu80p6xof2" path="res://PlayGround/spr/spr.tscn" id="5_s8byp"]
+[ext_resource type="Script" uid="uid://buaqesjd6ydbe" path="res://PlayGround/spr/components/ai_engine_controller.gd" id="7_ghjgg"]
+[ext_resource type="Script" uid="uid://cf35a7eopjxtw" path="res://addons/godot_rl_agents/sync.gd" id="8_w6qss"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_krv6v"]
 size = Vector2(100, 100)
@@ -42,6 +44,9 @@ shape = SubResource("RectangleShape2D_uf7cv")
 
 [node name="Spr" parent="." instance=ExtResource("5_s8byp")]
 position = Vector2(186, 223)
+_engine_controller = ExtResource("7_ghjgg")
 
-[node name="ItemFood" parent="." instance=ExtResource("3_ghjgg")]
-position = Vector2(1597, 560)
+[node name="Sync" type="Node" parent="."]
+script = ExtResource("8_w6qss")
+control_mode = 2
+onnx_model_path = "res://catching_food.onnx"

@@ -2,6 +2,8 @@ extends Node
 
 @export var _thick : float = 10.0;
 
+var _item_spawner: Callable
+
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	var window = get_window();
@@ -63,3 +65,11 @@ func respawn(spr: Spr):
 	spr.linear_velocity = Vector2.ZERO;
 	spr.angular_velocity = 0;
 	spr.freeze = false;
+
+func set_item_spawner(callable: Callable) -> void:
+	_item_spawner = callable
+
+func spawn_item(item: PackedScene, item_global_position :Vector2) -> Item:
+	if _item_spawner != null:
+		return _item_spawner.call(item, item_global_position) as Item;
+	return null;
