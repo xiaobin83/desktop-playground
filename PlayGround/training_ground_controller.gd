@@ -31,8 +31,9 @@ func _on_consume_item(item: Item) -> void:
 	if not _is_resetting:
 		_spawn_new_food += 1
 
-func _on_reward_changed(_reward: float) -> void:
-	_spr.set_agent_done(true)
+func _on_reward_changed(reward: float) -> void:
+	if reward > 1.0:
+		_spr.set_agent_done(true)
 
 func _reset() -> void:
 	print("reset")

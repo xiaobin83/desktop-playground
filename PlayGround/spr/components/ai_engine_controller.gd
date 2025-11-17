@@ -11,15 +11,14 @@ func _ready() -> void:
 	super._ready()
 	_ai_agent.init(self)
 
-func _process(_delta: float) -> void:
+func _process(delta: float) -> void:
 	if _ai_agent.needs_reset:
 		_spr.agent_request_reset()
 		return
 
 	var reward_changed = false
 	for item in _spr.get_touching_items():
-		_ai_agent.reward += 1.0
-		item.consume()
+		_ai_agent.reward += item.consume(delta)
 		reward_changed = true
 	if reward_changed:
 		_spr.agent_raise_reward_changed(_ai_agent.reward)
