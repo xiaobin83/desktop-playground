@@ -23,10 +23,10 @@ func consume(delta: float) -> float:
 	if _current_energy <= 0.0:
 		amount += _current_energy
 		despawn()
-	return 1.0
+	return 1 
 
 func get_endurance() -> float:
 	return _current_energy / _energy
 
 func _get_extra_obs() -> Array[float]:
-	return [Items.Type.Sun, radius, 0, 0]
+	return [radius, 0, 0, 0]

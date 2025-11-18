@@ -17,3 +17,4 @@ _engine_controller = ExtResource("4_q3euq")
 
 [node name="Sync" type="Node" parent="."]
 script = ExtResource("4_7t3th")
+speed_up = 8.0

@@ -29,7 +29,10 @@ func _process(delta: float) -> void:
 		_op_engine(action[i], engines[i])
 
 func _op_engine(action: float, engine) -> void:
-	engine.start_engine(action)
+	if action > 0:
+		engine.start_engine(1)
+	else:
+		engine.stop_engine()
 
 func _set_done(is_success: bool) -> void:
 	_ai_agent.is_success = is_success

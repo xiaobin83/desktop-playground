@@ -17,14 +17,12 @@ func get_obs() -> Dictionary:
 	if items and items.size() > 0:
 		var item = items[0]
 		var item_pos = to_local(item.global_position)
-		obs.append(1.0) # has item
-		obs.append(item_pos.x / 10)
-		obs.append(item_pos.y / 10)
+		obs.append(item_pos.x)
+		obs.append(item_pos.y)
 		obs.append_array(Item.get_extra_obs(item))
 	else:
-		obs.append(0) # no item
-		obs.append(0) # no meaning
-		obs.append(0)
+		obs.append(10000) # a large value
+		obs.append(10000) # a large value
 		obs.append_array(Item.get_default_extra_obs())
 
 	"""
@@ -54,7 +52,7 @@ func set_action(action) -> void:
 	var outputs = action["move_action"]
 	for i in range(_move_action.size()):
 		var value = clamp(outputs[i], -1.0, 1.0)
-		_move_action[i] = value * 0.5 + 0.5 # normalize to [0, 1]
+		_move_action[i] = value 
 
 func get_move_action() -> Array:
 	return _move_action
