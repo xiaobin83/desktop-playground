@@ -6,6 +6,7 @@ extends GroundController
 
 var _is_resetting: bool
 var _spawn_new_item: int = 0
+var _last_reward: float = 0.0
 
 var _item_list := []
 
@@ -24,17 +25,17 @@ func _spawn_one() -> void:
 	var item = Global.spawn_item_at_random_position(_get_random_item())
 	_item_list.append(item)
 
-func _on_consume_item(item: Item) -> void:
+func _on_request_despawn(item: Item) -> void:
 	var index = _item_list.find(item)
 	if index >= 0:
 		_item_list.remove_at(index)
-	super._on_consume_item(item)
+	super._on_request_despawn(item)
 	if not _is_resetting:
 		_spawn_new_item += 1
+		_spr.set_agent_done(true)
 
 func _on_reward_changed(reward: float) -> void:
-	if reward >= 1.0:
-		_spr.set_agent_done(true)
+	_last_reward = reward
 
 func _reset() -> void:
 	print("reset")
