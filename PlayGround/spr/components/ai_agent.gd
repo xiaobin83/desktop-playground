@@ -51,7 +51,8 @@ func get_action_space() -> Dictionary:
 func set_action(action) -> void:
 	var outputs = action["move_action"]
 	for i in range(_move_action.size()):
-		_move_action[i] = clamp(outputs[i], 0, 1.0)
+		var value = clamp(outputs[i], -1.0, 1.0)
+		_move_action[i] = value * 0.5 + 0.5 # normalize to [0, 1]
 
 func get_move_action() -> Array:
 	return _move_action
