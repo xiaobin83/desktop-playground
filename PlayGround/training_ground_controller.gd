@@ -32,7 +32,7 @@ func _on_request_despawn(item: Item) -> void:
 	super._on_request_despawn(item)
 	if not _is_resetting:
 		_spawn_new_item += 1
-		_spr.set_agent_done(true)
+		_spr.set_agent_done(_last_reward > 0.0)
 
 func _on_reward_changed(reward: float) -> void:
 	_last_reward = reward
