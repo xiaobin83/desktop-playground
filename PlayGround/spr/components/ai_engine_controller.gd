@@ -16,11 +16,12 @@ func _process(delta: float) -> void:
 		_spr.agent_request_reset()
 		return
 
-	var reward_changed = false
+	var reward = 0.0
 	for item in _spr.get_touching_items():
-		_ai_agent.reward += item.consume(delta)
-		reward_changed = true
-	if reward_changed:
+		reward += item.consume(delta)
+	reward += _ai_agent.get_stable_pose_reward()
+	_ai_agent.reward += reward
+	if abs(reward) > 0.0:
 		_spr.agent_raise_reward_changed(_ai_agent.reward)
 
 	var action = _ai_agent.get_move_action()

@@ -5,40 +5,49 @@ var _move_action := [0, 0, 0, 0, 0, 0]
 var is_success: bool = false
 
 const ITEM = &'ITEM'
+const MAX_DISTANCE = 10000
 
 var _spr :Spr
+var _items :Array
 
 func notify_spr_initialized(spr: Spr) -> void:
 	_spr = spr
 
 func get_obs() -> Dictionary:
 	var obs :Array[float] = []
-	var items = get_tree().get_nodes_in_group(ITEM)
-	if items and items.size() > 0:
-		var item = items[0]
+	_items = get_tree().get_nodes_in_group(ITEM)
+	if _items and _items.size() > 0:
+		var item = _items[0]
 		var item_pos = to_local(item.global_position)
 		obs.append(item_pos.x)
 		obs.append(item_pos.y)
-		obs.append_array(Item.get_extra_obs(item))
+		obs.append(item_pos.length())
+		#obs.append_array(Item.get_extra_obs(item))
 	else:
-		obs.append(10000) # a large value
-		obs.append(10000) # a large value
-		obs.append_array(Item.get_default_extra_obs())
+		obs.append(10000) 
+		obs.append(10000) 
+		obs.append(MAX_DISTANCE)
+		#obs.append_array(Item.get_default_extra_obs())
 
-	"""
-	var spr_pos = _spr.global_position
-	var spr_linear_velocity = _spr.linear_velocity
-	obs.append(spr_pos.x / 10) # local pos
-	obs.append(spr_pos.y / 10)
-	obs.append(spr_linear_velocity.x / 10) # local pos
-	obs.append(spr_linear_velocity.y / 10)
-	obs.append(rad_to_deg(_spr.rotation))
-	"""
+	#obs.append_array(_get_spr_obs())
 
 	return {"obs": obs}
 
+func _get_spr_obs() -> Array[float]:
+	return [_spr.linear_velocity.length(), _spr.angular_velocity]
+
 func get_reward() -> float:
+	#print("reward %.2f" % reward)
 	return reward
+
+func get_contacting_stable_pose_reward() -> float:
+	return 0
+
+func get_stable_pose_reward() -> float:
+	if _items and _items.size() > 0:
+		var local_pos = to_local(_items[0].global_position)
+		return -local_pos.length() * 0.001
+	return 0 
 
 func get_action_space() -> Dictionary:
 	return {
