@@ -1,4 +1,4 @@
-extends GroundController 
+extends GroundController
 
 @export var _items : Array[PackedScene]
 

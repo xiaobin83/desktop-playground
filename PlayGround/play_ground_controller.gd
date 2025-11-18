@@ -1,4 +1,4 @@
-extends GroundController 
+extends GroundController
 
 @onready var _igm :Node2D = $IGM
 @onready var _spr :Spr = $Spr
