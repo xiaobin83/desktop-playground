@@ -16,10 +16,10 @@ func get_obs() -> Dictionary:
 	var items = get_tree().get_nodes_in_group(ITEM)
 	if items and items.size() > 0:
 		var item = items[0]
-		var item_pos = item.global_position
+		var item_pos = to_local(item.global_position)
 		obs.append(1.0) # has item
-		obs.append(item_pos.x)
-		obs.append(item_pos.y)
+		obs.append(item_pos.x / 10)
+		obs.append(item_pos.y / 10)
 		obs.append_array(Item.get_extra_obs(item))
 	else:
 		obs.append(0) # no item
@@ -27,13 +27,15 @@ func get_obs() -> Dictionary:
 		obs.append(0)
 		obs.append_array(Item.get_default_extra_obs())
 
+	"""
 	var spr_pos = _spr.global_position
 	var spr_linear_velocity = _spr.linear_velocity
-	obs.append(spr_pos.x) # local pos
-	obs.append(spr_pos.y)
-	obs.append(spr_linear_velocity.x) # local pos
-	obs.append(spr_linear_velocity.y)
-	obs.append(_spr.rotation)
+	obs.append(spr_pos.x / 10) # local pos
+	obs.append(spr_pos.y / 10)
+	obs.append(spr_linear_velocity.x / 10) # local pos
+	obs.append(spr_linear_velocity.y / 10)
+	obs.append(rad_to_deg(_spr.rotation))
+	"""
 
 	return {"obs": obs}
 

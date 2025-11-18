@@ -23,7 +23,7 @@ func consume(delta: float) -> float:
 	if _current_energy <= 0.0:
 		amount += _current_energy
 		despawn()
-	return amount
+	return 1.0
 
 func get_endurance() -> float:
 	return _current_energy / _energy
