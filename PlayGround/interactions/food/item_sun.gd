@@ -29,4 +29,4 @@ func get_endurance() -> float:
 	return _current_energy / _energy
 
 func _get_extra_obs() -> Array[float]:
-	return [Items.Type.Sun, radius, get_endurance(), 0]
+	return [Items.Type.Sun, radius, 0, 0]
