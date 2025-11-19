@@ -6,7 +6,7 @@ var _move_action := [0, 0, 0, 0, 0, 0]
 const MAX_DISTANCE = 10000
 
 var _spr :Spr
-var _items :Array
+var _selected_item
 
 func notify_spr_initialized(spr: Spr) -> void:
 	_spr = spr
@@ -43,8 +43,8 @@ func get_contacting_stable_pose_reward() -> float:
 	return 0
 
 func get_stable_pose_reward() -> float:
-	if _items and _items.size() > 0:
-		var local_pos = to_local(_items[0].global_position)
+	if _selected_item:
+		var local_pos = to_local(_selected_item.global_position)
 		return -local_pos.length() * 0.001
 	return 0
 
