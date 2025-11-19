@@ -21,3 +21,4 @@ _collision_mask = 8
 
 [node name="Sync" type="Node" parent="."]
 script = ExtResource("1_kct4e")
+speed_up = 8.0
