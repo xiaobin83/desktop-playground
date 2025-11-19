@@ -5,7 +5,10 @@ extends RigidBody2D;
 @export var _counter: Node
 @export var _engine_controller : GDScript
 
+@onready var _sensor : ISensor2D = $Sensor
+
 var _engine_node
+var _ai_agent: AIAgent
 
 signal on_grabbed
 signal on_dropped
@@ -13,11 +16,7 @@ signal on_hovering
 
 # signal from agent
 signal on_agent_request_reset
-signal on_agent_reward_changed(reward: float)
 
-# signal sent to agent
-signal on_request_set_agent_done(is_success: bool)
-signal on_reset_agent
 
 var _is_grabbed: bool = false;
 var _touching_items = {}
@@ -55,23 +54,43 @@ func notify_hovering() -> void:
 func get_counter() -> Node:
 	return _counter
 
-func get_touching_items() -> Dictionary:
-	return _touching_items
-
 func entered_item(item: Item) -> void:
 	_touching_items[item] = true
 
 func exited_item(item: Item) -> void:
 	_touching_items.erase(item)
 
-func agent_raise_reward_changed(reward: float) -> void:
-	on_agent_reward_changed.emit(reward)
+#region Agent
+func set_ai_agent(agent: AIAgent) -> void:
+	_ai_agent = agent
+	agent.init(self)
 
 func agent_request_reset() -> void:
 	on_agent_request_reset.emit()
 
-func set_agent_done(is_success: bool) -> void:
-	on_request_set_agent_done.emit(is_success)
+func set_agent_done() -> void:
+	_ai_agent.done = true
+	_ai_agent.needs_reset = true
 
 func reset_agent() -> void:
-	on_reset_agent.emit()
+	_ai_agent.reset()
+
+func get_spr_obs() -> Array:
+	return _sensor.get_observation()
+#endregion
+
+func _physics_process(_delta: float) -> void:
+	if _ai_agent:
+		if _ai_agent.needs_reset:
+			_ai_agent.reset()
+			agent_request_reset()
+			return
+		var action = _ai_agent.get_move_action()
+		_engine_node.set_move_action(action)
+
+func _process(delta: float) -> void:
+	if _ai_agent:
+		_ai_agent.process_touching_items(_touching_items.keys(), delta)
+	else:
+		for item in _touching_items.keys():
+			item.consume(delta)

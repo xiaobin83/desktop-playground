@@ -2,7 +2,6 @@ class_name AIAgent
 extends AIController2D
 
 var _move_action := [0, 0, 0, 0, 0, 0]
-var is_success: bool = false
 
 const ITEM = &'ITEM'
 const MAX_DISTANCE = 10000
@@ -12,6 +11,7 @@ var _items :Array
 
 func notify_spr_initialized(spr: Spr) -> void:
 	_spr = spr
+	spr.set_ai_agent(self)
 
 func get_obs() -> Dictionary:
 	var obs :Array[float] = []
@@ -31,12 +31,10 @@ func get_obs() -> Dictionary:
 		obs.append(MAX_DISTANCE)
 		#obs.append_array(Item.get_default_extra_obs())
 
-	#obs.append_array(_get_spr_obs())
+	obs.append_array(_spr.get_spr_obs())
 
 	return {"obs": obs}
 
-func _get_spr_obs() -> Array[float]:
-	return [_spr.linear_velocity.length(), _spr.angular_velocity]
 
 func get_reward() -> float:
 	#print("reward %.2f" % reward)
@@ -68,7 +66,9 @@ func set_action(action) -> void:
 func get_move_action() -> Array:
 	return _move_action
 
-func get_info() -> Dictionary:
-	if done:
-		return {"is_success": is_success}
-	return {}
+func process_touching_items(items: Array, delta: float) -> void:
+	var r = 0.0
+	for item in items:
+		r += item.consume(delta)
+	r += get_stable_pose_reward()
+	reward += r

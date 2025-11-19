@@ -6,13 +6,11 @@ extends GroundController
 
 var _is_resetting: bool
 var _spawn_new_item: int = 0
-var _last_reward: float = 0.0
 
 var _item_list := []
 
 func _ready() -> void:
 	super._ready()
-	_spr.on_agent_reward_changed.connect(_on_reward_changed)
 	_spr.on_agent_request_reset.connect(_reset)
 	_is_resetting = false
 	_spawn_new_item = 1
@@ -32,15 +30,11 @@ func _on_request_despawn(item: Item) -> void:
 	super._on_request_despawn(item)
 	if not _is_resetting:
 		_spawn_new_item += 1
-		_spr.set_agent_done(_last_reward > 0.0)
-
-func _on_reward_changed(reward: float) -> void:
-	_last_reward = reward
+		_spr.set_agent_done()
 
 func _reset() -> void:
 	print("reset")
 	_is_resetting = true
-	_spr.reset_agent()
 	for item in _item_list:
 		item.despawn()
 	_spawn_new_item = 1

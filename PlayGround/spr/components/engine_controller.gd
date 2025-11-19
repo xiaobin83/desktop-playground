@@ -17,6 +17,5 @@ func _ready() -> void:
 func get_engines() -> Array:
 	return _engines
 
-func _process(_delta: float) -> void:
-	for item in _spr.get_touching_items():
-		item.consume()
+func set_move_action(_action: Array) -> void:
+	pass

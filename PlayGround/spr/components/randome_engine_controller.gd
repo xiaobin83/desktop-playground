@@ -1,4 +1,4 @@
-extends EngineController 
+extends EngineController
 
 @export var _durationMin: float = 2.0
 @export var _durationMax: float = 5.0
@@ -16,8 +16,6 @@ func _exit_tree() -> void:
 	_spr.on_dropped.disconnect(_on_dropped)
 
 func _process(delta: float) -> void:
-	super._process(delta)
-
 	if _cooldown.process(delta):
 		_start_random_engine()
 		_cooldown.reset(randf_range(_durationMin, _durationMax))
