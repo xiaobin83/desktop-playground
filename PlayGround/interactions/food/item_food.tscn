@@ -13,5 +13,12 @@ script = ExtResource("1_8dmr4")
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("CircleShape2D_8dmr4")
 
+[node name="Label" type="Label" parent="."]
+offset_left = 18.0
+offset_top = -40.0
+offset_right = 82.0
+offset_bottom = -16.0
+text = "ITEM 0"
+
 [connection signal="body_entered" from="." to="." method="_on_body_entered"]
 [connection signal="body_exited" from="." to="." method="_on_body_exited"]

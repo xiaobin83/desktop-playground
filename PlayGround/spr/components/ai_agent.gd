@@ -3,7 +3,6 @@ extends AIController2D
 
 var _move_action := [0, 0, 0, 0, 0, 0]
 
-const ITEM = &'ITEM'
 const MAX_DISTANCE = 10000
 
 var _spr :Spr
@@ -15,7 +14,7 @@ func notify_spr_initialized(spr: Spr) -> void:
 
 func get_obs() -> Dictionary:
 	var obs :Array[float] = []
-	_items = get_tree().get_nodes_in_group(ITEM)
+	_items = get_tree().get_nodes_in_group(_spr.get_item_group_name())
 	if _items and _items.size() > 0:
 		var item = _items[0]
 		var item_pos = to_local(item.global_position)

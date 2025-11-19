@@ -10,6 +10,8 @@
 [node name="TrainingGround" type="Node"]
 script = ExtResource("1_gstvq")
 _items = Array[PackedScene]([ExtResource("3_5sjcd"), ExtResource("3_lv2yr")])
+_collision_layer = 1
+_collision_mask = 1
 
 [node name="Spr" parent="." instance=ExtResource("5_ab366")]
 position = Vector2(186, 223)

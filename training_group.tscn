@@ -1,0 +1,23 @@
+[gd_scene load_steps=3 format=3 uid="uid://bqau31qi4urdg"]
+
+[ext_resource type="Script" uid="uid://cf35a7eopjxtw" path="res://addons/godot_rl_agents/sync.gd" id="1_kct4e"]
+[ext_resource type="PackedScene" uid="uid://8biidbt3m0lp" path="res://training_instance.tscn" id="2_d0iar"]
+
+[node name="Training Group" type="Node"]
+
+[node name="TrainingInstance1" parent="." instance=ExtResource("2_d0iar")]
+
+[node name="TrainingInstance2" parent="." instance=ExtResource("2_d0iar")]
+_collision_layer = 2
+_collision_mask = 2
+
+[node name="TrainingInstance3" parent="." instance=ExtResource("2_d0iar")]
+_collision_layer = 4
+_collision_mask = 4
+
+[node name="TrainingInstance4" parent="." instance=ExtResource("2_d0iar")]
+_collision_layer = 8
+_collision_mask = 8
+
+[node name="Sync" type="Node" parent="."]
+script = ExtResource("1_kct4e")

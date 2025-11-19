@@ -11,6 +11,10 @@ var _item_list := []
 
 func _ready() -> void:
 	super._ready()
+	_spr.collision_layer = _collision_layer
+	_spr.collision_mask = _collision_mask
+	_spr.set_sensor_collision_mask(_collision_mask)
+	_spr.set_item_group_name(_item_group_name)
 	_spr.on_agent_request_reset.connect(_reset)
 	_is_resetting = false
 	_spawn_new_item = 1
@@ -20,7 +24,8 @@ func _get_random_item() -> PackedScene:
 	return item
 
 func _spawn_one() -> void:
-	var item = Global.spawn_item_at_random_position(_get_random_item())
+	var random_position = Global.get_random_position()
+	var item = _spawn_item(_get_random_item(), random_position)
 	_item_list.append(item)
 
 func _on_request_despawn(item: Item) -> void:
@@ -45,3 +50,7 @@ func _process(_delta: float) -> void:
 		for i in range(_spawn_new_item):
 			_spawn_one()
 	_spawn_new_item = 0
+
+	if not Global.is_in_play_ground(_spr):
+		_spr.set_agent_done()
+		Global.respawn(_spr)

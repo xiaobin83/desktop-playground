@@ -1,0 +1,17 @@
+[gd_scene load_steps=6 format=3 uid="uid://8biidbt3m0lp"]
+
+[ext_resource type="Script" uid="uid://baueh67rt45ud" path="res://PlayGround/training_ground_controller.gd" id="1_wx8xk"]
+[ext_resource type="PackedScene" uid="uid://fj5y3saakpda" path="res://PlayGround/interactions/food/item_food.tscn" id="2_g1vjs"]
+[ext_resource type="PackedScene" uid="uid://cqd6cvpl8o41k" path="res://PlayGround/interactions/food/item_sun.tscn" id="3_m0wjo"]
+[ext_resource type="PackedScene" uid="uid://t0gu80p6xof2" path="res://PlayGround/spr/spr.tscn" id="4_qi8np"]
+[ext_resource type="Script" uid="uid://buaqesjd6ydbe" path="res://PlayGround/spr/components/ai_engine_controller.gd" id="5_4hjne"]
+
+[node name="TrainingInstance" type="Node"]
+script = ExtResource("1_wx8xk")
+_items = Array[PackedScene]([ExtResource("2_g1vjs"), ExtResource("3_m0wjo")])
+_collision_layer = 1
+_collision_mask = 1
+
+[node name="Spr" parent="." instance=ExtResource("4_qi8np")]
+position = Vector2(186, 223)
+_engine_controller = ExtResource("5_4hjne")

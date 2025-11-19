@@ -7,6 +7,11 @@ extends GroundController
 func _ready() -> void:
 	super._ready()
 
+	_spr.collision_layer = _collision_layer
+	_spr.collision_mask = _collision_mask
+	_spr.set_sensor_collision_mask(_collision_mask)
+	_spr.set_item_group_name(_item_group_name)
+
 	_igm.global_position = get_window().size
 	PlayerInput.set_igm_area(_igm_area)
 	Global.respawn(_spr)
@@ -16,5 +21,5 @@ func _process(_delta: float) -> void:
 		Global.respawn(_spr)
 
 func _on_request_despawn(item: Item) -> void:
-	_spr.set_agent_done(true)
+	_spr.set_agent_done()
 	super._on_request_despawn(item)

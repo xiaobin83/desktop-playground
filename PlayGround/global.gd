@@ -12,6 +12,8 @@ func _ready() -> void:
 
 func create_world_boundary(size: Vector2) -> void:
 	var area = StaticBody2D.new();
+	area.collision_layer = ~0
+	area.collision_mask = 0
 
 	# up
 	var collision = CollisionShape2D.new();
@@ -75,7 +77,10 @@ func spawn_item(item: PackedScene, item_global_position :Vector2) -> Item:
 
 func spawn_item_at_random_position(item: PackedScene) -> Item:
 	assert(_item_spawner, "no spawner provided")
+	return _item_spawner.call(item, get_random_position())
+
+func get_random_position() -> Vector2:
 	var size = get_window().size
 	var x = randf_range(0, size.x)
 	var y = randf_range(0, size.y)
-	return _item_spawner.call(item, Vector2(x, y))
+	return Vector2(x, y)

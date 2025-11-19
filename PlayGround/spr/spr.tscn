@@ -64,6 +64,18 @@ script = ExtResource("9_2ps75")
 _durationMin = 30.0
 _durationMax = 180.0
 
+[node name="Label" type="Label" parent="Head"]
+custom_minimum_size = Vector2(0, 5)
+anchors_preset = 10
+anchor_right = 1.0
+offset_left = -64.0
+offset_top = -36.0
+offset_right = -64.0
+offset_bottom = -12.0
+grow_horizontal = 2
+text = "GROUP 0"
+horizontal_alignment = 1
+
 [node name="EngineController" type="Node2D" parent="."]
 
 [node name="down" type="Node2D" parent="EngineController" node_paths=PackedStringArray("_engine_light")]

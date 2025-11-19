@@ -1,7 +1,9 @@
 class_name Item
-extends Node2D
+extends Area2D
 
 const _default_extra_obs :Array[float] = [0, 0, 0, 0]
+
+@onready var _label :Label = $Label
 
 signal on_request_despawn(item: Item)
 
@@ -10,6 +12,11 @@ func woke_up_from_pool() -> void:
 
 func get_item_type() -> Items.Type:
 	return Items.Type.None
+
+func set_item_group_name(group_name: StringName):
+	add_to_group(group_name)
+	if _label:
+		_label.text = group_name
 
 func _on_body_entered(body: Node2D) -> void:
 	if body is Spr:

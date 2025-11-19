@@ -6,9 +6,11 @@ extends RigidBody2D;
 @export var _engine_controller : GDScript
 
 @onready var _sensor : ISensor2D = $Sensor
+@onready var _label :Label = $Head/Label
 
 var _engine_node
 var _ai_agent: AIAgent
+var _ai_agent_item_group_name: StringName
 
 signal on_grabbed
 signal on_dropped
@@ -16,7 +18,6 @@ signal on_hovering
 
 # signal from agent
 signal on_agent_request_reset
-
 
 var _is_grabbed: bool = false;
 var _touching_items = {}
@@ -30,6 +31,17 @@ func _enter_tree() -> void:
 
 func _ready() -> void:
 	NodeExt.call_in_children(self, 'notify_spr_initialized', self)
+
+func set_sensor_collision_mask(mask: int) -> void:
+	if _sensor is RaycastSensor2D:
+		_sensor.collision_mask = mask
+
+func set_item_group_name(item_group_name: StringName) -> void:
+	_ai_agent_item_group_name = item_group_name
+	_label.text = item_group_name
+
+func get_item_group_name() -> StringName:
+	return _ai_agent_item_group_name
 
 func is_grabbed() -> bool:
 	return _is_grabbed
@@ -63,7 +75,7 @@ func exited_item(item: Item) -> void:
 #region Agent
 func set_ai_agent(agent: AIAgent) -> void:
 	_ai_agent = agent
-	agent.init(self)
+	_ai_agent.init(self)
 
 func agent_request_reset() -> void:
 	on_agent_request_reset.emit()
