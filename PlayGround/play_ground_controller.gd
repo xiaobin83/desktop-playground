@@ -7,6 +7,8 @@ extends GroundController
 func _ready() -> void:
 	super._ready()
 
+	Global.set_item_spawner(_spawn_item)
+
 	_spr.collision_layer = _collision_layer
 	_spr.collision_mask = _collision_mask
 	_spr.set_sensor_collision_mask(_collision_mask)

@@ -62,5 +62,5 @@ _engine_controller = ExtResource("7_ghjgg")
 
 [node name="Sync" type="Node" parent="."]
 script = ExtResource("8_w6qss")
-control_mode = 0
-onnx_model_path = "res://catching_food.onnx"
+control_mode = 2
+onnx_model_path = "res://group_training.onnx"
