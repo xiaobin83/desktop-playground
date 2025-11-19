@@ -21,7 +21,6 @@ config/icon="res://icon.svg"
 Global="*res://PlayGround/global.tscn"
 PlayerInput="*res://PlayGround/input/player_input.gd"
 ObjectPool="*res://PlayGround/utils/object_pool.gd"
-Items="*res://PlayGround/interactions/items.gd"
 
 [display]
 

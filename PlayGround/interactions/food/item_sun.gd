@@ -30,3 +30,6 @@ func get_endurance() -> float:
 
 func _get_extra_obs() -> Array[float]:
 	return [radius, 0, 0, 0]
+
+func get_item_type() -> Items.Type:
+	return Items.Type.Sun

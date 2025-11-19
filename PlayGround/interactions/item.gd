@@ -8,6 +8,9 @@ signal on_request_despawn(item: Item)
 func woke_up_from_pool() -> void:
 	pass
 
+func get_item_type() -> Items.Type:
+	return Items.Type.None
+
 func _on_body_entered(body: Node2D) -> void:
 	if body is Spr:
 		body.entered_item(self)
