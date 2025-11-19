@@ -5,5 +5,4 @@ func _get_extra_obs() -> Array[float]:
 
 func consume(_delta: float) -> float:
 	despawn()
-	return 100
-
+	return 200
