@@ -1,13 +1,14 @@
 class_name EngineController
 extends Node2D
 
-const ENABLE_FUEL = false
+const ENABLE_FUEL := true
 const ENGINE_INTERFACE := [&"start_engine", &"stop_engine"]
 
 var _spr: Spr
 var _engines: Array[Node2D] = []
-var _fuel: float = 1
-var _fuel_consumption_rate: float = 1.0
+var _max_fuel := 1.0
+var _fuel := 1.0
+var _fuel_consumption_rate: float = 0.01
 
 var _op_engine: Callable
 
@@ -15,6 +16,7 @@ func notify_spr_initialized(spr: Spr) -> void:
 	_spr = spr
 
 func _ready() -> void:
+	_fuel = _max_fuel
 	if ENABLE_FUEL:
 		_op_engine = _op_engine_with_fuel
 	else:
@@ -32,6 +34,9 @@ func accept_physics_process(_agent, _delta: float) -> void:
 
 func get_fuel() -> float:
 	return _fuel
+
+func get_max_fuel() -> float:
+	return _max_fuel
 
 # called in _physics_process
 func set_move_action(action: Array, delta: float) -> void:
@@ -53,4 +58,5 @@ func _op_engine_with_fuel(action: float, engine, delta: float) -> void:
 		else:
 			_fuel = 0
 	else:
+		_fuel += delta * _fuel_consumption_rate * 0.5
 		engine.stop_engine()

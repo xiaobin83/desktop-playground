@@ -7,6 +7,7 @@ extends RigidBody2D;
 
 @onready var _sensor : ISensor2D = $Sensor
 @onready var _label :Label = $Head/Label
+@onready var _fuel_bar : ProgressBar = $Head/FuelBar
 
 var _engine_node
 var _ai_agent: AIAgent
@@ -88,7 +89,9 @@ func reset_agent() -> void:
 	_ai_agent.reset()
 
 func get_spr_obs() -> Array:
-	return _sensor.get_observation()
+	var obs = [_engine_node.get_max_fuel(), _engine_node.get_fuel()]
+	obs.append_array(_sensor.get_observation())
+	return obs
 #endregion
 
 func _physics_process(delta: float) -> void:
@@ -100,6 +103,8 @@ func _physics_process(delta: float) -> void:
 		_engine_node.accept_physics_process(_ai_agent, delta)
 
 func _process(delta: float) -> void:
+	if _fuel_bar:
+		_fuel_bar.value = _engine_node.get_fuel()
 	if _ai_agent:
 		_ai_agent.process_touching_items(_touching_items.keys(), delta)
 	else:

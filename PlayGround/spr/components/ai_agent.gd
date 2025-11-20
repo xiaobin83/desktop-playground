@@ -72,6 +72,10 @@ func process_touching_items(items: Array, delta: float) -> void:
 	_accumulated_reward += r
 
 func visit_physics_process(engine_controller, delta: float) -> void:
+	var fuel = engine_controller.get_fuel()
+	var max_fuel = engine_controller.get_max_fuel()
+	if fuel <= 0.2 * max_fuel:
+		reward -= 0.1 * delta  # penalize low fuel
 	engine_controller.set_move_action(_move_action, delta)
 
 func reset() -> void:

@@ -76,6 +76,17 @@ grow_horizontal = 2
 text = "GROUP 0"
 horizontal_alignment = 1
 
+[node name="FuelBar" type="ProgressBar" parent="Head"]
+modulate = Color(1, 1, 0, 1)
+offset_left = -51.0
+offset_top = 17.0
+offset_right = -47.0
+offset_bottom = 44.0
+max_value = 1.0
+value = 0.5
+fill_mode = 3
+show_percentage = false
+
 [node name="EngineController" type="Node2D" parent="."]
 
 [node name="down" type="Node2D" parent="EngineController" node_paths=PackedStringArray("_engine_light")]
