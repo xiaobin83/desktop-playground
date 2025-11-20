@@ -8,7 +8,7 @@ var _spr: Spr
 var _engines: Array[Node2D] = []
 var _max_fuel := 1.0
 var _fuel := 1.0
-var _fuel_consumption_rate: float = 0.01
+var _fuel_consumption_rate: float = 1.0
 
 var _op_engine: Callable
 
@@ -52,11 +52,11 @@ func _op_engine_without_fuel(action: float, engine, _delta: float) -> void:
 
 func _op_engine_with_fuel(action: float, engine, delta: float) -> void:
 	if action > 0:
-		_fuel -= delta * _fuel_consumption_rate
 		if _fuel > 0:
 			engine.start_engine(1)
-		else:
-			_fuel = 0
+			_fuel -= delta * _fuel_consumption_rate
 	else:
-		_fuel += delta * _fuel_consumption_rate * 0.5
+		_fuel += delta * _fuel_consumption_rate * 0.08
+		if _fuel > _max_fuel:
+			_fuel = _max_fuel
 		engine.stop_engine()
