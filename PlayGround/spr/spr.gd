@@ -91,14 +91,13 @@ func get_spr_obs() -> Array:
 	return _sensor.get_observation()
 #endregion
 
-func _physics_process(_delta: float) -> void:
+func _physics_process(delta: float) -> void:
 	if _ai_agent:
 		if _ai_agent.needs_reset:
 			_ai_agent.reset()
 			agent_request_reset()
 			return
-		var action = _ai_agent.get_move_action()
-		_engine_node.set_move_action(action)
+		_engine_node.accept_physics_process(_ai_agent, delta)
 
 func _process(delta: float) -> void:
 	if _ai_agent:

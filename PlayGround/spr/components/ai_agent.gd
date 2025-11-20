@@ -14,11 +14,11 @@ func notify_spr_initialized(spr: Spr) -> void:
 
 func get_obs() -> Dictionary:
 	var obs :Array[float] = []
-	_items = get_tree().get_nodes_in_group(_spr.get_item_group_name())
-	if _items and _items.size() > 0:
-		var item = _items[0]
-		var item_pos = to_local(item.global_position)
-		obs.append_array(Items.get_one_hot(item.get_item_type()))
+	var items = get_tree().get_nodes_in_group(_spr.get_item_group_name())
+	if items and items.size() > 0:
+		_selected_item = items[0]
+		var item_pos = to_local(_selected_item.global_position)
+		obs.append_array(Items.get_one_hot(_selected_item.get_item_type()))
 		obs.append(item_pos.x)
 		obs.append(item_pos.y)
 		obs.append(item_pos.length())
@@ -62,12 +62,12 @@ func set_action(action) -> void:
 		var value = clamp(outputs[i], -1.0, 1.0)
 		_move_action[i] = value
 
-func get_move_action() -> Array:
-	return _move_action
-
 func process_touching_items(items: Array, delta: float) -> void:
 	var r = 0.0
 	for item in items:
 		r += item.consume(delta)
 	r += get_stable_pose_reward()
 	reward += r
+
+func visit_physics_process(engine_controller, delta: float) -> void:
+	engine_controller.set_move_action(_move_action, delta)
