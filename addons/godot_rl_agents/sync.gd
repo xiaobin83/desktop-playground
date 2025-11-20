@@ -147,7 +147,7 @@ func _initialize_inference_agents():
 			agent.onnx_model = agent_onnx_model
 			if not agent_onnx_model.action_means_only_set:
 				agent_onnx_model.set_action_means_only(action_space)
-				
+
 		_set_heuristic("model", agents_inference)
 
 
@@ -282,8 +282,8 @@ func _heuristic_process():
 func _extract_action_dict(action_array: Array, action_space: Dictionary, action_means_only: bool):
 	var index = 0
 	var result = {}
-	for key in action_space.keys():	
-		var size = action_space[key]["size"]	
+	for key in action_space.keys():
+		var size = action_space[key]["size"]
 		var action_type = action_space[key]["action_type"]
 		if action_type == "discrete":
 			var largest_logit: float # Value of the largest logit for this action in the actions array
@@ -292,7 +292,7 @@ func _extract_action_dict(action_array: Array, action_space: Dictionary, action_
 				var logit_value = action_array[index + logit_idx]
 				if logit_value > largest_logit:
 					largest_logit = logit_value
-					largest_logit_idx = logit_idx 
+					largest_logit_idx = logit_idx
 			result[key] = largest_logit_idx # Index of the largest logit is the discrete action value
 			index += size
 		elif action_type == "continuous":
@@ -305,7 +305,7 @@ func _extract_action_dict(action_array: Array, action_space: Dictionary, action_
 
 		else:
 			assert(false, 'Only "discrete" and "continuous" action types supported. Found: %s action type set.' % action_type)
-		
+
 
 	return result
 
@@ -341,7 +341,7 @@ func _get_agents():
 				"Currently only a single AIController can be used for recording expert demos."
 			)
 			agent_demo_record = agent
-	
+
 	var training_agent_count = agents_training.size()
 	agents_training_policy_names.resize(training_agent_count)
 	for i in range(0, training_agent_count):

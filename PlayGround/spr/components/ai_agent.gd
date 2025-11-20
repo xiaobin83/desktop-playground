@@ -7,6 +7,7 @@ const MAX_DISTANCE = 10000
 
 var _spr :Spr
 var _selected_item
+var _accumulated_reward :float = 0.0
 
 func notify_spr_initialized(spr: Spr) -> void:
 	_spr = spr
@@ -24,6 +25,7 @@ func get_obs() -> Dictionary:
 		obs.append(item_pos.length())
 		#obs.append_array(Item.get_extra_obs(item))
 	else:
+		_selected_item = null
 		obs.append_array(Items.get_one_hot(Items.Type.None))
 		obs.append(10000)
 		obs.append(10000)
@@ -39,10 +41,7 @@ func get_reward() -> float:
 	#print("reward %.2f" % reward)
 	return reward
 
-func get_contacting_stable_pose_reward() -> float:
-	return 0
-
-func get_stable_pose_reward() -> float:
+func _get_pose_reward() -> float:
 	if _selected_item:
 		var local_pos = to_local(_selected_item.global_position)
 		return -local_pos.length() * 0.001
@@ -56,6 +55,7 @@ func get_action_space() -> Dictionary:
 		},
 	}
 
+# called from RL framework
 func set_action(action) -> void:
 	var outputs = action["move_action"]
 	for i in range(_move_action.size()):
@@ -65,9 +65,16 @@ func set_action(action) -> void:
 func process_touching_items(items: Array, delta: float) -> void:
 	var r = 0.0
 	for item in items:
-		r += item.consume(delta)
-	r += get_stable_pose_reward()
+		if item == _selected_item:
+			r += item.consume(delta)
+	r += _get_pose_reward()
 	reward += r
+	_accumulated_reward += r
 
 func visit_physics_process(engine_controller, delta: float) -> void:
 	engine_controller.set_move_action(_move_action, delta)
+
+func reset() -> void:
+	print("AIAgent accumulated reward: %.2f" % _accumulated_reward)
+	_accumulated_reward = 0.0
+	super.reset()
