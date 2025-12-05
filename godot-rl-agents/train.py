@@ -13,8 +13,8 @@ def read_sb3(stdout):
 def main():
 	parser = argparse.ArgumentParser(allow_abbrev = False)
 	parser.add_argument('--name', type = str)
-	parser.add_argument('--port', type = int)
 	parser.add_argument('--store_temp', action='store_true')
+	parser.add_argument('--enable_agent_status', action='store_true')
 
 	args = parser.parse_args()
 
@@ -61,11 +61,12 @@ def main():
 		if os.path.exists(agent_status_log_path):
 			shutil.rmtree(agent_status_log_path)
 
-	print(f'start agent_status, log dir = {agent_status_log_path}')
-	proc_status = subprocess.Popen(
-		[sys.executable, 'agent_status.py', '--path', agent_status_log_path],
-		text = True,
-		bufsize = 1)
+	if args.enable_agent_status:
+		print(f'start agent_status, log dir = {agent_status_log_path}')
+		subprocess.Popen(
+			[sys.executable, 'agent_status.py', '--path', agent_status_log_path],
+			text = True,
+			bufsize = 1)
 
 	sb3_params = [
 		'--save_model_path', agent_training_name,
@@ -75,7 +76,7 @@ def main():
 		sb3_params = sb3_params + ['--resume_model_path', agent_training_name]
 
 	print(f'start sb3, training name: {agent_training_name}')
-	proc_sb3 = subprocess.Popen(
+	subprocess.Popen(
 		[sys.executable, 'stable_baselines3_example.py'] + sb3_params,
 		text = True,
 		bufsize = 1)

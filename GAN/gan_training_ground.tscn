@@ -1,3 +1,37 @@
-[gd_scene format=3 uid="uid://c7qv6ft3bhgdk"]
+[gd_scene load_steps=6 format=3 uid="uid://c7qv6ft3bhgdk"]
 
-[node name="GanTrainingGround" type="Node2D"]
+[ext_resource type="Script" uid="uid://tlcq6epnvq37" path="res://GAN/gan_training_ground_controller.gd" id="1_e1xny"]
+[ext_resource type="Script" uid="uid://cwc1xpki1m11d" path="res://GAN/map/map.gd" id="1_prxj1"]
+[ext_resource type="Script" uid="uid://bq4t38l772xno" path="res://GAN/map/map_viz.gd" id="2_8o5b8"]
+[ext_resource type="Script" uid="uid://bl6xswi8fkm7d" path="res://GAN/agents/agent_builder.gd" id="3_7f7fp"]
+[ext_resource type="Script" uid="uid://cf35a7eopjxtw" path="res://addons/godot_rl_agents/sync.gd" id="5_a0rcm"]
+
+[node name="GanTrainingGround" type="Node"]
+script = ExtResource("1_e1xny")
+
+[node name="MapViz" type="Node2D" parent="." node_paths=PackedStringArray("_map", "_agent_builder")]
+position = Vector2(374, 306)
+script = ExtResource("2_8o5b8")
+_map = NodePath("../Map")
+_agent_builder = NodePath("../AgentBuilder")
+_cell_size = Vector2(128, 128)
+_grid_color = Color(0.8, 0.8, 0.8, 0.1)
+
+[node name="Map" type="Node" parent="."]
+script = ExtResource("1_prxj1")
+metadata/_custom_type_script = "uid://cwc1xpki1m11d"
+
+[node name="AgentBuilder" type="Node2D" parent="."]
+script = ExtResource("3_7f7fp")
+
+[node name="StepButton" type="Button" parent="."]
+offset_left = 85.0
+offset_top = 190.0
+offset_right = 128.0
+offset_bottom = 221.0
+text = "Step"
+
+[node name="Sync" type="Node" parent="."]
+script = ExtResource("5_a0rcm")
+_controlled_training_step = true
+metadata/_custom_type_script = "uid://cf35a7eopjxtw"
