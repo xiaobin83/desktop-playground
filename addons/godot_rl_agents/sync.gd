@@ -173,10 +173,16 @@ func _initialize_demo_recording():
 		current_demo_trajectory[1] = []
 		agent_demo_record.heuristic = "demo_record"
 
+func reset_training_step() -> void:
+	_new_step = 0
+	_current_step = 0
 
 func new_step() -> int:
 	_new_step += 1
 	return _new_step
+
+func toggle_controlled_training_step() -> void:
+	_controlled_training_step = not _controlled_training_step;
 
 func _physics_process(delta):
 	if _controlled_training_step:

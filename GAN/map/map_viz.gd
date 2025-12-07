@@ -6,15 +6,33 @@ extends Node2D
 @export var _cell_size : Vector2 = Vector2(32, 32)
 @export var _grid_color : Color = Color(0.8, 0.8, 0.8)
 
+var _agent_trajectory : Array[Vector2i] = []
+
 func _ready() -> void:
 	_agent_builder.on_action.connect(_on_agent_action)
 
-func _on_agent_action() -> void:
+func _on_agent_action(type: GanAgentBuilder.ActionType) -> void:
+	match type:
+		GanAgentBuilder.ActionType.Reset:
+			_agent_trajectory.clear()
+		GanAgentBuilder.ActionType.Move:
+			_agent_trajectory.append(_agent_builder.get_grid_pos())
+		GanAgentBuilder.ActionType.Place:
+			pass
 	queue_redraw()
 
 func _draw() -> void:
 	_draw_map()
 	_draw_builder()
+	_draw_trajectory()
+
+func _draw_trajectory() -> void:
+	for i in range(0, _agent_trajectory.size() - 1):
+		var p0 = _agent_trajectory[i]
+		var p1 = _agent_trajectory[i+1]
+		var pos0 = Vector2(p0.x, p0.y) * _cell_size + _cell_size / 2
+		var pos1 = Vector2(p1.x, p1.y) * _cell_size + _cell_size / 2
+		draw_line(pos0, pos1, Color.GREEN)
 
 func _draw_builder() -> void:
 	var posi = _agent_builder.get_grid_pos()
@@ -36,19 +54,29 @@ func _draw_map() -> void:
 			# draw grid
 			draw_rect(Rect2(pos, _cell_size), _grid_color, false, 1)
 			# draw blockers
-			if grid.blocker_north != GanWorld.Blocker.None:
-				draw_line(pos, pos + Vector2(_cell_size.x, 0), Color.RED, 4)
-			if grid.blocker_west != GanWorld.Blocker.None:
-				draw_line(pos, pos + Vector2(0, _cell_size.y), Color.RED, 4)
-			if grid.blocker_south != GanWorld.Blocker.None:
-				draw_line(pos + Vector2(0, _cell_size.y), pos + _cell_size, Color.RED, 4)
-			if grid.blocker_east != GanWorld.Blocker.None:
-				draw_line(pos + Vector2(_cell_size.x, 0), pos + _cell_size, Color.RED, 4)
-			# draw inner items
-			if grid.inner_item == GanWorld.InnerItem.Treasure:
-				draw_circle(pos + _cell_size / 2, 8, Color.YELLOW)
-			elif grid.inner_item == GanWorld.InnerItem.Exit:
-				draw_rect(Rect2(pos + _cell_size / 4, _cell_size / 2), Color.GREEN)
+			for dir in range(GanWorld.Blocker.Count):
+				var blocker = grid.blockers[dir]
+				if blocker <= GanWorld.Blocker.Path:
+					continue
+				match dir:
+					Map.Direction.North:
+						draw_line(pos, pos + Vector2(_cell_size.x, 0), Color.RED, 4)
+					Map.Direction.West:
+						draw_line(pos, pos + Vector2(0, _cell_size.y), Color.RED, 4)
+					Map.Direction.South:
+						draw_line(pos + Vector2(0, _cell_size.y), pos + _cell_size, Color.RED, 4)
+					Map.Direction.East:
+						draw_line(pos + Vector2(_cell_size.x, 0), pos + _cell_size, Color.RED, 4)
 
+			# draw inner items
+			match grid.inner_item:
+				GanWorld.InnerItem.Treasure:
+					draw_circle(pos + _cell_size / 2, 8, Color.YELLOW)
+				GanWorld.InnerItem.Start:
+					draw_rect(Rect2(pos + _cell_size / 4, _cell_size / 2), Color.SEA_GREEN)
+				GanWorld.InnerItem.Exit:
+					draw_rect(Rect2(pos + _cell_size / 4, _cell_size / 2), Color.GREEN)
+
+			# status
 			if grid.visited:
 				draw_circle(pos + _cell_size / 2, 10, Color.BLUE)

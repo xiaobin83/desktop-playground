@@ -106,16 +106,17 @@ parser.add_argument(
     type=int,
     help="How many instances of the environment executable to " "launch - requires --env_path to be set if > 1.",
 )
+parser.add_argument('--obs_key', action='append', default=[])
 args, extras = parser.parse_known_args()
 
 
-def handle_onnx_export():
+def handle_onnx_export(obs_keys):
     # Enforce the extension of onnx and zip when saving model to avoid potential conflicts in case of same name
     # and extension used for both
     if args.onnx_export_path is not None:
         path_onnx = pathlib.Path(args.onnx_export_path).with_suffix(".onnx")
         print("Exporting onnx to: " + os.path.abspath(path_onnx))
-        export_model_as_onnx(model, str(path_onnx))
+        export_model_as_onnx(model, str(path_onnx), obs_keys=obs_keys)
 
 
 def handle_model_save():
@@ -134,7 +135,10 @@ def close_env():
 
 
 def cleanup():
-    handle_onnx_export()
+    obs_key = args.obs_key
+    if len(obs_key) == 0:
+        obs_key = None 
+    handle_onnx_export(obs_key)
     handle_model_save()
     close_env()
 

@@ -15,6 +15,7 @@ def main():
 	parser.add_argument('--name', type = str)
 	parser.add_argument('--store_temp', action='store_true')
 	parser.add_argument('--enable_agent_status', action='store_true')
+	parser.add_argument('--obs_key', action='append', default=[])
 
 	args = parser.parse_args()
 
@@ -74,6 +75,9 @@ def main():
 		'--linear_lr_schedule']
 	if os.path.exists(training_file_name):
 		sb3_params = sb3_params + ['--resume_model_path', agent_training_name]
+	for key in args.obs_key:
+		sb3_params.append('--obs_key')
+		sb3_params.append(key)
 
 	print(f'start sb3, training name: {agent_training_name}')
 	subprocess.Popen(

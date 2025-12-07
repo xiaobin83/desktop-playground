@@ -3,6 +3,7 @@ extends Node
 
 enum Blocker {
 	None = 0,
+	Path,
 	Wall,
 	Count
 }
@@ -16,12 +17,12 @@ enum InnerItem {
 }
 
 static func decode_blocker_action(action: int) -> Blocker:
-	if action < 0 or action >= Blocker.Count:
+	if action <= Blocker.Path or action >= Blocker.Count:
 		return Blocker.None
 	return action as Blocker
 
 static func decode_inner_item_action(action: int) -> InnerItem:
-	if action < 0 or action >= InnerItem.Count:
+	if action <= InnerItem.Start or action >= InnerItem.Count:
 		return InnerItem.None
 	return action as InnerItem
 

@@ -3,37 +3,42 @@ extends Node
 
 @export var _size : Vector2i = Vector2i(10, 10)
 
+enum Direction {
+	None = -1, North = 0, West, South, East, Count
+}
+
 class Grid:
-	var blocker_north := GanWorld.Blocker.None
-	var blocker_west := GanWorld.Blocker.None
-	var blocker_south := GanWorld.Blocker.None
-	var blocker_east := GanWorld.Blocker.None
+	var blockers: Array = [GanWorld.Blocker.None, GanWorld.Blocker.None, GanWorld.Blocker.None,GanWorld.Blocker.None]
 	var inner_item := GanWorld.InnerItem.None
 	var visited := false
+	var built := false
 
-	static var _channel_size := Grid.new().encode(Vector2.ZERO).size()
+	static var _channel_size := Grid.new().encode(0).size()
 
 	static func get_channel_size() -> int:
 		return _channel_size
 
 	func place_start() -> void:
 		inner_item = GanWorld.InnerItem.Start
+		built = true
 
-	func encode(normalized_pos: Vector2) -> Array[float]:
+	func encode(has_agent: bool) -> Array[float]:
 		var arr :Array[float] = []
 		# blockers
-		arr.append(GanWorld.encode_blocker(blocker_north))
-		arr.append(GanWorld.encode_blocker(blocker_west))
-		arr.append(GanWorld.encode_blocker(blocker_south))
-		arr.append(GanWorld.encode_blocker(blocker_east))
+		for b in blockers:
+			arr.append(GanWorld.encode_blocker(b))
 		# inner item
 		arr.append(GanWorld.encode_inner_item(inner_item))
 		# visited
 		if visited: arr.append(1)
 		else: arr.append(0)
-		# position (normalized)
-		arr.append(normalized_pos.x)
-		arr.append(normalized_pos.y)
+
+		if has_agent: arr.append(1)
+		else: arr.append(0)
+
+		if built: arr.append(1)
+		else: arr.append(0)
+
 		return arr
 
 class Inventory:
@@ -61,10 +66,14 @@ var _data : Array[Grid]
 var _inventory : Inventory = Inventory.new()
 
 func _enter_tree() -> void:
+	reset()
+
+func reset() -> void:
 	_data = []
 	for y in _size.y:
 		for x in _size.x:
 			_data.append(Grid.new())
+	_inventory = Inventory.new()
 
 func get_size() -> Vector2i:
 	return _size
@@ -82,8 +91,12 @@ func get_local_map_encoded(pos: Vector2i, radius: int) -> Array:
 	var view_sz = radius * 2 + 1
 	var channel_size = Grid.get_channel_size()
 	var local_map = []
-	for i in view_sz * view_sz:
-		local_map.append(_filled_array(0.0, channel_size))
+	# (channel, x, y)
+	for i in channel_size:
+		var layer = []
+		for k in view_sz:
+			layer.append(_filled_array(0.0, view_sz))
+		local_map.append(layer)
 	for dy in range(-radius, radius + 1):
 		for dx in range(-radius, radius + 1):
 			var grid_x = pos.x + dx
@@ -92,8 +105,11 @@ func get_local_map_encoded(pos: Vector2i, radius: int) -> Array:
 			var view_y = dy + radius
 			if grid_x >= 0 and grid_x < _size.x and grid_y >= 0 and grid_y < _size.y:
 				var grid = _data[grid_y * _size.x + grid_x]
-				var normalized_pos = Vector2(grid_x / float(_size.x - 1), grid_y / float(_size.y - 1))
-				local_map[view_y * view_sz + view_x] = grid.encode(normalized_pos)
+				var has_agent = dx == 0 and dy == 0
+				var layer_of_grid = grid.encode(has_agent)
+				for index in layer_of_grid.size():
+					var p = layer_of_grid[index]
+					local_map[index][view_y][view_x] = p
 
 	return local_map
 
@@ -118,41 +134,61 @@ func get_random_position() -> Vector2i:
 
 func place_start_position(pos: Vector2i) -> void:
 	_assert(pos)
-	_data[pos.y * _size.x + pos.x].place_start()
+	_data[to_index(pos)].place_start()
 
-func place_blocker_north(pos: Vector2i, blocker: GanWorld.Blocker) -> void:
+func place_blocker(pos: Vector2i, direction: int, blocker: GanWorld.Blocker) -> void:
 	_assert(pos)
-	_data[pos.y * _size.x + pos.x].blocker_north = blocker
+	_data[pos.y * _size.x + pos.x].blockers[direction] = blocker
 
-func place_blocker_west(pos: Vector2i, blocker: GanWorld.Blocker) -> void:
+func place_blockers(pos: Vector2i, blockers: Array[GanWorld.Blocker]) -> float:
 	_assert(pos)
-	_data[pos.y * _size.x + pos.x].blocker_west = blocker
-
-func place_blocker_south(pos: Vector2i, blocker: GanWorld.Blocker) -> void:
-	_assert(pos)
-	_data[pos.y * _size.x + pos.x].blocker_south = blocker
-
-func place_blocker_east(pos: Vector2i, blocker: GanWorld.Blocker) -> void:
-	_assert(pos)
-	_data[pos.y * _size.x + pos.x].blocker_east = blocker
+	var target_blockers = _data[pos.y * _size.x + pos.x].blockers 
+	var count = 0
+	var total_count = 0
+	for dir in range(Direction.Count):
+		total_count += 1
+		var next_pos = get_next_pos(pos, dir)
+		if is_valid(next_pos):
+			var other_blocker = get_blocker(next_pos, _get_counter_direction(dir))
+			if other_blocker != GanWorld.Blocker.Path:
+				target_blockers[dir] = blockers[dir]
+				count += 1
+	if total_count == 0: return 1.0
+	return count as float / total_count
 
 func place_inner_item(pos: Vector2i, inner_item: GanWorld.InnerItem) -> void:
 	_assert(pos)
-	_data[pos.y * _size.x + pos.x].inner_item = inner_item
+	var index = to_index(pos)
+	_data[index].inner_item = inner_item
 
-func visit(pos: Vector2i) -> void:
+func visit(pos: Vector2i) -> float:
 	_assert(pos)
-	_data[pos.y * _size.x + pos.x].visited = true
+	var index = to_index(pos)
+	if not _data[index].visited:
+		_data[index].visited = true
+		return 1.0
+	return 0.0
 
-func _direction_to_vector(direction: int) -> Vector2i:
+func to_index(pos: Vector2i) -> int:
+	return pos.y * _size.x + pos.x
+
+func try_build(pos: Vector2i) -> bool:
+	_assert(pos)
+	var i = pos.y * _size.x + pos.x
+	if not _data[i].built:
+		_data[i].built = true
+		return true
+	return false
+
+static func _direction_to_vector(direction: Direction) -> Vector2i:
 	match direction:
-		0:
+		Direction.North:
 			return Vector2i(0, -1) # north
-		1:
+		Direction.West:
 			return Vector2i(-1, 0) # west
-		2:
+		Direction.South:
 			return Vector2i(0, 1) # south
-		3:
+		Direction.East:
 			return Vector2i(1, 0) # east
 		_:
 			return Vector2i.ZERO
@@ -161,52 +197,63 @@ func _direction_valid(direction: int) -> bool:
 	return direction >= 0 and direction <= 3
 
 func is_trapped(pos: Vector2i) -> bool:
-	for direction in 4:
+	for direction in range(Direction.Count):
 		if can_move(pos, direction):
 			return false
 	return true
 
-func can_move(pos: Vector2i, direction: int) -> bool:
+func get_blocker(pos: Vector2i, direction: int) -> GanWorld.Blocker:
+	_assert(pos)
+	assert(direction < 4) # 4 directions
+	return _data[pos.y * _size.x + pos.x].blockers[direction]
+
+func can_move(pos: Vector2i, direction: Direction) -> bool:
 	if not _direction_valid(direction):
 		return false
-	var v = _direction_to_vector(direction)
-	return _can_move(pos, v)
+	var blocker = get_blocker(pos, direction)
+	if blocker > GanWorld.Blocker.Path:
+		return false
 
-func _can_move(pos: Vector2i, direction: Vector2i) -> bool:
-	_assert(pos)
-	var x = pos.x
-	var y = pos.y
-	if direction == Vector2i(0, -1): # north
-		if y <= 0:
-			return false
-		var grid = _data[y * _size.x + x]
-		if grid.blocker_north != GanWorld.Blocker.None:
-			return false
-	elif direction == Vector2i(-1, 0): # west
-		if x <= 0:
-			return false
-		var grid = _data[y * _size.x + x]
-		if grid.blocker_west != GanWorld.Blocker.None:
-			return false
-	elif direction == Vector2i(0, 1): # south
-		if y >= _size.y - 1:
-			return false
-		var grid = _data[y * _size.x + x]
-		if grid.blocker_south != GanWorld.Blocker.None:
-			return false
-	elif direction == Vector2i(1, 0): # east
-		if x >= _size.x - 1:
-			return false
-		var grid = _data[y * _size.x + x]
-		if grid.blocker_east != GanWorld.Blocker.None:
-			return false
+	var next_pos = get_next_pos(pos, direction)
+	if next_pos.x < 0 or next_pos.x >= _size.x:
+		return false
+	if next_pos.y < 0 or next_pos.y >= _size.y:
+		return false
+
+	blocker = get_blocker(next_pos, _get_counter_direction(direction)) 
+	if blocker > GanWorld.Blocker.Path:
+		return false
+
 	return true
 
-func move(pos: Vector2i, direction: Vector2i) -> Vector2i:
+func _get_counter_direction(direction: int) -> int:
+	match direction:
+		Direction.North:
+			return Direction.South
+		Direction.West:
+			return Direction.East
+		Direction.South:
+			return Direction.North
+		Direction.East:
+			return Direction.West
+		_:
+			return Direction.None 
+
+static func get_next_pos(pos: Vector2i, direction: Direction) -> Vector2i:
+	return pos + _direction_to_vector(direction)
+
+func move(pos: Vector2i, direction: int) -> Vector2i:
+	place_blocker(pos, direction, GanWorld.Blocker.Path)
+	return _move(pos, _direction_to_vector(direction))
+
+func _move(pos: Vector2i, direction: Vector2i) -> Vector2i:
 	_assert(pos)
 	var new_pos = pos + direction
 	_assert(new_pos)
 	return new_pos
 
+func is_valid(pos: Vector2i) -> bool:
+	return pos.x >= 0 and pos.x < _size.x and pos.y >= 0 and pos.y < _size.y
+
 func _assert(pos: Vector2i) -> void:
-	assert(pos.x >= 0 and pos.x < _size.x and pos.y >= 0 and pos.y < _size.y, 'Position %s out of map size %s' % [pos, _size])
+	assert(is_valid(pos), 'Position %s out of map size %s' % [pos, _size])

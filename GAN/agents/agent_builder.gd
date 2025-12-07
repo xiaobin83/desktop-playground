@@ -44,15 +44,21 @@ const ACT_PLACE_BLOCKER_SOUTH := &'ps'
 const ACT_PLACE_BLOCKER_EAST := &'pe'
 const ACT_PLACE_INNER := &'inner'
 
-signal on_action
+enum ActionType {
+	Place, Move, Reset
+}
+signal on_action(type: ActionType)
 
 var _grid_pos :Vector2i = Vector2i.ZERO
 var _map :Map
 
-func visit(map: Map, pos: Vector2i) -> void:
+# return 1 if not visited, 0 if already visited 
+func visit(map: Map, pos: Vector2i) -> float:
 	_map = map
 	_grid_pos = pos
-	_map.visit(_grid_pos)
+	var v = _map.visit(_grid_pos)
+	on_action.emit(ActionType.Move)
+	return v
 
 func get_grid_pos() -> Vector2i:
 	return _grid_pos
@@ -114,33 +120,43 @@ func get_obs_space() -> Dictionary:
 func set_action(action) -> void:
 	# place blocker, inner
 	if not _map: return
-	var bp = GanWorld.decode_blocker_action(action[ACT_PLACE_BLOCKER_NORTH])
-	_map.place_blocker_north(_grid_pos, bp)
-	bp = GanWorld.decode_blocker_action(action[ACT_PLACE_BLOCKER_WEST])
-	_map.place_blocker_west(_grid_pos, bp)
-	bp = GanWorld.decode_blocker_action(action[ACT_PLACE_BLOCKER_SOUTH])
-	_map.place_blocker_south(_grid_pos, bp)
-	bp = GanWorld.decode_blocker_action(action[ACT_PLACE_BLOCKER_EAST])
-	_map.place_blocker_east(_grid_pos, bp)
-	var inner_item = GanWorld.decode_inner_item_action(action[ACT_PLACE_INNER])
-	_map.place_inner_item(_grid_pos, inner_item)
-	if inner_item == GanWorld.InnerItem.Exit:
-		_mark_done_and_reset()
-		on_action.emit()
-		return
+
+	if _map.try_build(_grid_pos):
+		var blockers : Array[GanWorld.Blocker] = [
+			# sequence matters
+			GanWorld.decode_blocker_action(action[ACT_PLACE_BLOCKER_NORTH]),
+			GanWorld.decode_blocker_action(action[ACT_PLACE_BLOCKER_WEST]),
+			GanWorld.decode_blocker_action(action[ACT_PLACE_BLOCKER_SOUTH]),
+			GanWorld.decode_blocker_action(action[ACT_PLACE_BLOCKER_EAST])
+		]
+		var p = _map.place_blockers(_grid_pos, blockers)
+		reward += p * 0.01
+
+		var inner_item = GanWorld.decode_inner_item_action(action[ACT_PLACE_INNER])
+		_map.place_inner_item(_grid_pos, inner_item)
+		if inner_item == GanWorld.InnerItem.Exit:
+			_mark_done_and_reset()
+			return
+
+		on_action.emit(ActionType.Place)
+		
+	else:
+		reward -= 0.1
 
 	# move
 	var move_dir = action[ACT_MOVE_DIR]
 	if _map.can_move(_grid_pos, move_dir):
 		var pos = _map.move(_grid_pos, move_dir)
-		visit(_map, pos)
-		reward += 0.1
+		reward += 0.01
+		var r = visit(_map, pos)
+		reward += r * 0.1
 	else:
 		if _map.is_trapped(_grid_pos):
+			print('trapped')
+			reward -= 1.0
 			_mark_done_and_reset()
-			return
+		reward -= 0.01
 
-	on_action.emit()
 
 func _mark_done_and_reset() -> void:
 	done = true
@@ -148,3 +164,9 @@ func _mark_done_and_reset() -> void:
 
 func get_reward() -> float:
 	return reward
+
+func reset() -> void:
+	super.reset()
+	on_action.emit(ActionType.Reset)
+	_map = null
+	_grid_pos = Vector2i.ZERO

@@ -77,7 +77,7 @@ func set_ai_agent(agent: AIAgent) -> void:
 	_ai_agent = agent
 	_ai_agent.init(self)
 
-func agent_request_reset() -> void:
+func _agent_request_reset() -> void:
 	on_agent_request_reset.emit()
 
 func set_agent_done() -> void:
@@ -160,7 +160,7 @@ func _process(delta: float) -> void:
 		if _ai_agent.needs_reset:
 			_force_alignment_decay = 1.0
 			_ai_agent.reset()
-			agent_request_reset()
+			_agent_request_reset()
 			return
 		_ai_agent.process_touching_items(_touching_items.keys(), delta)
 	else:
