@@ -2,6 +2,8 @@ extends Node
 
 # --fixed-fps 2000 --disable-render-loop
 
+@export var _controlled_training_step := false
+
 enum ControlModes {HUMAN, TRAINING, ONNX_INFERENCE}
 @export var control_mode: ControlModes = ControlModes.TRAINING
 @export_range(1, 10, 1, "or_greater") var action_repeat := 8
@@ -49,6 +51,10 @@ var _action_space_training: Array[Dictionary] = []
 var _action_space_inference: Array[Dictionary] = []
 var _obs_space_training: Array[Dictionary] = []
 
+var _new_step := 0
+var _current_step := 0
+
+
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	await get_tree().root.ready
@@ -56,7 +62,6 @@ func _ready():
 	_initialize()
 	await get_tree().create_timer(1.0).timeout
 	get_tree().set_pause(false)
-
 
 func _initialize():
 	_get_agents()
@@ -168,15 +173,34 @@ func _initialize_demo_recording():
 		current_demo_trajectory[1] = []
 		agent_demo_record.heuristic = "demo_record"
 
+func reset_training_step() -> void:
+	_new_step = 0
+	_current_step = 0
 
-func _physics_process(_delta):
+func new_step() -> int:
+	_new_step += 1
+	return _new_step
+
+func toggle_controlled_training_step() -> void:
+	_controlled_training_step = not _controlled_training_step;
+
+func _physics_process(delta):
+	if _controlled_training_step:
+		if _new_step != _current_step:
+			_current_step = _new_step
+			_sync_process(delta)
+	else:
+		_sync_process(delta)
+
+func _sync_process(_delta):
 	# two modes, human control, agent control
 	# pause tree, send obs, get actions, set actions, unpause tree
 	_demo_record_process()
 
-	if n_action_steps % action_repeat != 0:
-		n_action_steps += 1
-		return
+	if not _controlled_training_step:
+		if n_action_steps % action_repeat != 0:
+			n_action_steps += 1
+			return
 
 	n_action_steps += 1
 
