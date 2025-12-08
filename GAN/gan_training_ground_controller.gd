@@ -6,6 +6,8 @@ extends Node
 @onready var _step_button = $StepButton
 @onready var _auto_button = $AutoButton
 
+var _cooldown = Cooldown.new(1.0)
+
 func _ready() -> void:
 	_step_button.pressed.connect(_on_step_button_pressed)
 	_step_button.mouse_entered.connect(_on_hovering_button.bind(_step_button, true))
@@ -35,9 +37,10 @@ func _start_new() -> void:
 	_map.place_start_position(pos)
 	_agent_builder.visit(_map, pos)
 
-func _process(_delta) -> void:
+func _process(delta) -> void:
 	if _agent_builder.needs_reset:
-		_agent_builder.reset()
-		_map.reset()
-		_sync.reset_training_step()
-		_start_new()
+		if _cooldown.process(delta):
+			_agent_builder.reset()
+			_map.reset()
+			_sync.reset_training_step()
+			_start_new()

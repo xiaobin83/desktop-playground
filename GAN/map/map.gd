@@ -142,7 +142,7 @@ func place_blocker(pos: Vector2i, direction: int, blocker: GanWorld.Blocker) -> 
 
 func place_blockers(pos: Vector2i, blockers: Array[GanWorld.Blocker]) -> float:
 	_assert(pos)
-	var target_blockers = _data[pos.y * _size.x + pos.x].blockers 
+	var target_blockers = _data[pos.y * _size.x + pos.x].blockers
 	var count = 0
 	var total_count = 0
 	for dir in range(Direction.Count):
@@ -220,7 +220,7 @@ func can_move(pos: Vector2i, direction: Direction) -> bool:
 	if next_pos.y < 0 or next_pos.y >= _size.y:
 		return false
 
-	blocker = get_blocker(next_pos, _get_counter_direction(direction)) 
+	blocker = get_blocker(next_pos, _get_counter_direction(direction))
 	if blocker > GanWorld.Blocker.Path:
 		return false
 
@@ -237,7 +237,7 @@ func _get_counter_direction(direction: int) -> int:
 		Direction.East:
 			return Direction.West
 		_:
-			return Direction.None 
+			return Direction.None
 
 static func get_next_pos(pos: Vector2i, direction: Direction) -> Vector2i:
 	return pos + _direction_to_vector(direction)

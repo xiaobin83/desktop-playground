@@ -52,7 +52,7 @@ signal on_action(type: ActionType)
 var _grid_pos :Vector2i = Vector2i.ZERO
 var _map :Map
 
-# return 1 if not visited, 0 if already visited 
+# return 1 if not visited, 0 if already visited
 func visit(map: Map, pos: Vector2i) -> float:
 	_map = map
 	_grid_pos = pos
@@ -120,6 +120,7 @@ func get_obs_space() -> Dictionary:
 func set_action(action) -> void:
 	# place blocker, inner
 	if not _map: return
+	if needs_reset: return
 
 	if _map.try_build(_grid_pos):
 		var blockers : Array[GanWorld.Blocker] = [
@@ -134,12 +135,12 @@ func set_action(action) -> void:
 
 		var inner_item = GanWorld.decode_inner_item_action(action[ACT_PLACE_INNER])
 		_map.place_inner_item(_grid_pos, inner_item)
+		on_action.emit(ActionType.Place)
+
 		if inner_item == GanWorld.InnerItem.Exit:
 			_mark_done_and_reset()
 			return
 
-		on_action.emit(ActionType.Place)
-		
 	else:
 		reward -= 0.1
 
