@@ -5,4 +5,3 @@ func get_item_type() -> Items.Type:
 
 func _get_extra_obs() -> Array[float]:
 	return [0, 0, 0, 0]
-

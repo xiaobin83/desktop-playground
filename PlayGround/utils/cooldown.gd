@@ -1,4 +1,5 @@
 class_name Cooldown
+extends RefCounted
 
 var _time: float
 var _passed_time: float

@@ -1,6 +1,0 @@
-[gd_scene load_steps=2 format=3 uid="uid://bojugvpfea1jl"]
-
-[ext_resource type="Script" uid="uid://d34uqu6rhg3kk" path="res://MultiPlay/connection.gd" id="1_fje0c"]
-
-[node name="Connection" type="Node"]
-script = ExtResource("1_fje0c")

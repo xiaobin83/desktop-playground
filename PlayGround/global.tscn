@@ -4,9 +4,8 @@
 
 [sub_resource type="ImmediateMesh" id="ImmediateMesh_t6l8l"]
 
-[node name="Global" type="Node" node_paths=PackedStringArray("_meshInstance2D")]
+[node name="Global" type="Node"]
 script = ExtResource("1_t6l8l")
-_meshInstance2D = NodePath("MeshInstance2D")
 _thick = 100.0
 
 [node name="MeshInstance2D" type="MeshInstance2D" parent="."]

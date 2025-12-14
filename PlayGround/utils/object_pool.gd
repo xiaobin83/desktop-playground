@@ -2,8 +2,27 @@ extends Node
 
 var _pool := {}
 
+const meta_cls = &'_pool_cls'
 const meta_path = &'_pool_path'
 const meta_packed_scene = &'_pool_packed_scene'
+
+const WOKE_UP_FROM_POOL = &'woke_up_from_pool'
+
+# allocate instance from a class_name, add to tree by default
+func allocate_class(cls) -> Node:
+	if not cls in _pool:
+		_pool[cls] = []
+	var list = _pool[cls]
+	var instance: Node
+	if list.size() > 0:
+		instance = list.pop_back()
+		if WOKE_UP_FROM_POOL in instance:
+			instance.woke_up_from_pool()
+	else:
+		instance = cls.new() 
+		instance.set_meta(meta_cls, cls)
+	add_child(instance)
+	return instance
 
 func allocate_packed_scene(packed_scene: PackedScene, recycle_time: float = -1) -> Node:
 	if not packed_scene in _pool:
@@ -12,7 +31,8 @@ func allocate_packed_scene(packed_scene: PackedScene, recycle_time: float = -1) 
 	var instance: Node 
 	if list.size() > 0:
 		instance = list.pop_back()	
-		instance.woke_up_from_pool()
+		if WOKE_UP_FROM_POOL in instance:
+			instance.woke_up_from_pool()
 	else:
 		instance = packed_scene.instantiate()
 		instance.set_meta(meta_packed_scene, packed_scene)
@@ -27,7 +47,8 @@ func allocate_path(path: String, recycle_time: float = -1) -> Node:
 	var instance: Node = null
 	if list.size() > 0:
 		instance = list.pop_back()
-		instance.woke_up_from_pool()
+		if WOKE_UP_FROM_POOL in instance:
+			instance.woke_up_from_pool()
 	else:
 		var scene: PackedScene = load(path)
 		instance = scene.instantiate()
@@ -42,6 +63,8 @@ func recycle(instance: Node) -> void:
 		key = instance.get_meta(meta_packed_scene)
 	elif instance.has_meta(meta_path):
 		key = instance.get_meta(meta_path)
+	elif instance.has_meta(meta_cls):
+		key = instance.get_meta(meta_cls) 
 	else:
 		instance.queue_free()
 		return

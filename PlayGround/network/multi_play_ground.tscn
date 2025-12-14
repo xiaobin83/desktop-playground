@@ -1,0 +1,40 @@
+[gd_scene load_steps=3 format=3 uid="uid://bojugvpfea1jl"]
+
+[ext_resource type="Script" uid="uid://d34uqu6rhg3kk" path="res://PlayGround/network/connection.gd" id="1_fje0c"]
+[ext_resource type="Script" uid="uid://cqvc32i4cofa4" path="res://PlayGround/network/connection_controller.gd" id="2_kr0tp"]
+
+[node name="Root" type="Node"]
+
+[node name="ConnectionController" type="Node" parent="." node_paths=PackedStringArray("_root_control", "_btn_connect", "_text_room_id", "_conn")]
+script = ExtResource("2_kr0tp")
+_root_control = NodePath("Container")
+_btn_connect = NodePath("Container/BtnConnect")
+_text_room_id = NodePath("Container/HBoxContainer/TextRoomId")
+_conn = NodePath("Connection")
+
+[node name="Connection" type="Node" parent="ConnectionController"]
+script = ExtResource("1_fje0c")
+
+[node name="Container" type="VBoxContainer" parent="ConnectionController"]
+custom_minimum_size = Vector2(300, 0)
+offset_left = 80.0
+offset_top = 80.0
+offset_right = 158.0
+offset_bottom = 120.0
+
+[node name="HBoxContainer" type="HBoxContainer" parent="ConnectionController/Container"]
+custom_minimum_size = Vector2(0, 36)
+layout_mode = 2
+
+[node name="Label" type="Label" parent="ConnectionController/Container/HBoxContainer"]
+layout_mode = 2
+text = "Room ID:"
+
+[node name="TextRoomId" type="TextEdit" parent="ConnectionController/Container/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "ROOM ID"
+
+[node name="BtnConnect" type="Button" parent="ConnectionController/Container"]
+layout_mode = 2
+text = "Connect"
