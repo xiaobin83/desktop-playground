@@ -1,13 +1,16 @@
-[gd_scene load_steps=3 format=3 uid="uid://bojugvpfea1jl"]
+[gd_scene load_steps=4 format=3 uid="uid://bojugvpfea1jl"]
 
 [ext_resource type="Script" uid="uid://d34uqu6rhg3kk" path="res://PlayGround/network/connection.gd" id="1_fje0c"]
+[ext_resource type="Script" uid="uid://2v5e6s26b5b4" path="res://PlayGround/network/simulate_player.gd" id="1_qjhaa"]
 [ext_resource type="Script" uid="uid://cqvc32i4cofa4" path="res://PlayGround/network/connection_controller.gd" id="2_kr0tp"]
 
 [node name="MultiPlay" type="Node2D"]
+script = ExtResource("1_qjhaa")
 
-[node name="ConnectionController" type="Node2D" parent="." node_paths=PackedStringArray("_root_control", "_btn_connect", "_text_room_id", "_conn")]
+[node name="ConnectionController" type="Node2D" parent="." node_paths=PackedStringArray("_root_control", "_simulate_player_label", "_btn_connect", "_text_room_id", "_conn")]
 script = ExtResource("2_kr0tp")
 _root_control = NodePath("Container")
+_simulate_player_label = NodePath("Container/PlayerLabel")
 _btn_connect = NodePath("Container/BtnConnect")
 _text_room_id = NodePath("Container/HBoxContainer/TextRoomId")
 _conn = NodePath("Connection")
@@ -21,6 +24,10 @@ offset_left = 80.0
 offset_top = 80.0
 offset_right = 158.0
 offset_bottom = 120.0
+
+[node name="PlayerLabel" type="Label" parent="ConnectionController/Container"]
+layout_mode = 2
+text = "Player"
 
 [node name="HBoxContainer" type="HBoxContainer" parent="ConnectionController/Container"]
 custom_minimum_size = Vector2(0, 36)

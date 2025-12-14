@@ -8,3 +8,4 @@
 
 [node name="Multiplay Instance 2" parent="." instance=ExtResource("1_tc446")]
 position = Vector2(0, 218)
+_simulate_player = 1
