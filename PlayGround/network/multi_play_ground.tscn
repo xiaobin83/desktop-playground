@@ -3,9 +3,9 @@
 [ext_resource type="Script" uid="uid://d34uqu6rhg3kk" path="res://PlayGround/network/connection.gd" id="1_fje0c"]
 [ext_resource type="Script" uid="uid://cqvc32i4cofa4" path="res://PlayGround/network/connection_controller.gd" id="2_kr0tp"]
 
-[node name="Root" type="Node"]
+[node name="MultiPlay" type="Node2D"]
 
-[node name="ConnectionController" type="Node" parent="." node_paths=PackedStringArray("_root_control", "_btn_connect", "_text_room_id", "_conn")]
+[node name="ConnectionController" type="Node2D" parent="." node_paths=PackedStringArray("_root_control", "_btn_connect", "_text_room_id", "_conn")]
 script = ExtResource("2_kr0tp")
 _root_control = NodePath("Container")
 _btn_connect = NodePath("Container/BtnConnect")

@@ -16,8 +16,6 @@ var _signaling: Signaling
 var _user_id: String = ""
 var _room_id: String = ""
 
-var _peers = {} 
-
 func _ready() -> void:
 	_signaling = Signaling.new()
 
