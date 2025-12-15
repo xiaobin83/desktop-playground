@@ -1,4 +1,4 @@
-extends Node 
+extends Node
 
 enum SimulatePlayer {
 	PlayerA, PlayerB

@@ -1,5 +1,5 @@
 class_name Signaling
-extends RefCounted 
+extends RefCounted
 
 @export var _signal_server : String = "http://localhost:9001"
 
@@ -20,7 +20,7 @@ class Response:
 	var response_code: int
 	var headers: PackedStringArray
 	var body: PackedByteArray
-	
+
 	func _init(result: Array) -> void:
 		status = result[0]
 		response_code = result[1]
@@ -29,6 +29,10 @@ class Response:
 
 var _room: Room
 
+var _printer: Printer = Printer.new('Signaling')
+
+func set_local_user(local_user: LocalUser) -> void:
+	_printer = local_user.get_printer('Signaling')
 
 func join_room_async(user_id: String, room_id: String) -> int:
 	var body = JSON.stringify({
@@ -48,18 +52,18 @@ func update_ice_candidate_async(user_id: String, media: String, index :int, ice_
 			'media': media,
 			'index': index,
 			'ice_name': ice_name
-		} 
+		}
 	})
 	await _request_async(body)
 
 func _request_async(body) -> Response:
 	var req = ObjectPool.allocate_class(HTTPRequest)
 	var headers = ["Content-Type: application/json"]
-	print('request %s' % body)
+	_printer.p('request %s' % body)
 	req.request(_signal_server, headers, HTTPClient.METHOD_POST, body)
 	var result = await req.request_completed
 	ObjectPool.recycle(req)
-	return Response.new(result) 
+	return Response.new(result)
 
 func _complete_join_room(user_id: String, room_id: String, resp: Response) -> bool:
 	if resp.status != HTTPRequest.RESULT_SUCCESS:
@@ -67,18 +71,18 @@ func _complete_join_room(user_id: String, room_id: String, resp: Response) -> bo
 	if resp.response_code != 200:
 		return false
 	var body_str = resp.body.get_string_from_utf8()
-	print(body_str)
+	_printer.p(body_str)
 	var dict = JSON.parse_string(body_str) as Dictionary
 	if dict == null:
 		return false
 	var err = dict.get('error')
 	if err != null:
-		printerr(err)
+		_printer.err(err)
 		return false
 
 	var users_in_room = dict.get('users_in_room')
 	if not users_in_room:
-		printerr('no users in room')
+		_printer.err('no users in room')
 		return false
 
 	_room = Room.new()
@@ -87,7 +91,7 @@ func _complete_join_room(user_id: String, room_id: String, resp: Response) -> bo
 		var ret_user_id = user.get('user_id') as String
 		var player_id = user.get('player_id')
 		var user_in_room = User.new()
-		user_in_room.user_id = ret_user_id 
+		user_in_room.user_id = ret_user_id
 		user_in_room.player_id = player_id
 		_room.users.append(user_in_room)
 

@@ -1,7 +1,7 @@
 class_name Connection
 extends Node
 
-const DATA_CHANNEL := &'date_channel' 
+const DATA_CHANNEL := &'date_channel'
 const DATA_CHANNEL_ID := 1
 
 const DATA_CHANNEL_DESC := {
@@ -16,8 +16,12 @@ var _signaling: Signaling
 var _user_id: String = ""
 var _room_id: String = ""
 
-func _ready() -> void:
+var _printer: Printer = Printer.new('Connection')
+
+func set_local_user(local_user: LocalUser) -> void:
+	_printer = local_user.get_printer('Connection')
 	_signaling = Signaling.new()
+	_signaling.set_local_user(local_user)
 
 func start_connection_async(user_id: String, room_id: String) -> bool:
 	_user_id = user_id
@@ -39,15 +43,15 @@ func start_connection_async(user_id: String, room_id: String) -> bool:
 	if room.has_only_one_user():
 		err = local_peer.create_offer()
 		if err != OK:
-			print('create_offer failed')
+			_printer.err('create_offer failed')
 			return false
-	
+
 	var local_user = _signaling.get_local_user()
 	if not local_user:
-		printerr('incorrect local peer id')
+		_printer.err('incorrect local peer id')
 		local_peer = null
 		return false
-	
+
 	var local_peer_id = local_user.player_id
 	var multi_peer = WebRTCMultiplayerPeer.new()
 	multi_peer.create_mesh(local_peer_id)
@@ -60,14 +64,14 @@ func start_connection_async(user_id: String, room_id: String) -> bool:
 	_peer = local_peer
 	_ch = local_ch
 	_multi_peer = multi_peer
-	
+
 	return true
 
 func _process(_delta: float) -> void:
 	if _peer: _peer.poll()
 
 func _on_session_created(peer: WebRTCPeerConnection, type: String, sdp: String) -> void:
-	print('_on_session_created', type, sdp)
+	_printer.p('_on_session_created', type, sdp)
 	if type == 'offer':
 		peer.set_local_description(type, sdp)
 	else:
@@ -76,5 +80,5 @@ func _on_session_created(peer: WebRTCPeerConnection, type: String, sdp: String) 
 func _on_ice_candidate_created(media: String, index: int, ice_name: String) -> void:
 	var local_user = _signaling.get_local_user()
 	if not local_user:
-		printerr('no local user when _on_ice_candidate_created')
+		_printer.err('no local user when _on_ice_candidate_created')
 	_signaling.update_ice_candidate_async(local_user.user_id, media, index, ice_name)

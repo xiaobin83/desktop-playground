@@ -1,19 +1,20 @@
 extends Node
 
-@export var _root_control :Control 
+@export var _root_control :Control
 @export var _simulate_player_label: Label
 @export var _btn_connect :Button
 @export var _text_room_id :TextEdit
-@export var _conn :Connection 
+@export var _conn :Connection
 
 var _local_user :LocalUser
-var _printer :LocalUser.Printer
+var _printer :Printer = Printer.new('ConnectionController')
 
 # called in _enter_tree
 func set_local_user(local_user: LocalUser) -> void:
 	_local_user = local_user
-	_printer = local_user.get_printer()
+	_printer = local_user.get_printer('ConnectionController')
 	_printer.p('set_local_user %s, id = %s' % [_local_user.get_user_name(), _local_user.get_user_id()])
+	$Connection.set_local_user(local_user)
 
 func _ready() -> void:
 	_text_room_id.text = 'default'
