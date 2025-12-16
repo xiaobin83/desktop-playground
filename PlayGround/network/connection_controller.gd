@@ -20,15 +20,15 @@ func _ready() -> void:
 	_text_room_id.text = 'default'
 	_simulate_player_label.text = _local_user.get_user_name()
 	_btn_connect.pressed.connect(_on_btn_connect_pressed)
-	_execlude_from_mouse_pass_through(_root_control)
+	_exclude_from_mouse_pass_through(_root_control)
 
-func _execlude_from_mouse_pass_through(control: Control) -> void:
+func _exclude_from_mouse_pass_through(control: Control) -> void:
 	if not control: return
 
 	_notify_mouse_entered_and_exited(control)
 	for child in control.get_children(true):
 		if child is Control:
-			_execlude_from_mouse_pass_through(child)
+			_exclude_from_mouse_pass_through(child)
 
 func _notify_mouse_entered_and_exited(control)  -> void:
 	control.mouse_entered.connect(_on_mouse_entered.bind(control))

@@ -30,10 +30,6 @@ func get_user_id() -> String:
 		id = PlayerPref.get_value(_user_id_key)
 	return id
 
-var _printer: Printer
-
 func get_printer(extra_tag: String) -> Printer:
-	if _printer: return _printer
 	var tag = '[%s][%s]' % [_name, extra_tag]
-	_printer = Printer.new(tag)
-	return _printer
+	return Printer.new(tag)

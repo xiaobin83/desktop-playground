@@ -1,12 +1,22 @@
 class_name Signaling
 extends RefCounted
 
+enum ConnectionType { None, Mesh, Server, Client }
+enum Actor { Offerer, Answerer }
+
+signal on_peer_joined(user: User)
+
 @export var _signal_server : String = "http://localhost:9001"
+
+const ACTION_HEARTBEAT := "heartbeat"
+const ACTION_JOIN := "join"
+const ACTION_SEND_ICE := "send_ice"
+const ACTION_SEND_OFFER := "send_offer"
 
 class User:
 	var user_id :String
 	var player_id :int
-
+	var actor :Actor
 class Room:
 	var room_id :String
 	var users :Array[User] = []
@@ -28,26 +38,36 @@ class Response:
 		body = result[3]
 
 var _room: Room
+var room: Room :
+	get: return _room
 
 var _printer: Printer = Printer.new('Signaling')
+var _cooldown = Cooldown.new(10.0)
+
+var _connection_type: ConnectionType = ConnectionType.None
+var connection_type: ConnectionType :
+	get: return _connection_type
 
 func set_local_user(local_user: LocalUser) -> void:
 	_printer = local_user.get_printer('Signaling')
 
 func join_room_async(user_id: String, room_id: String) -> int:
 	var body = JSON.stringify({
-		'action': 'join',
+		'action': ACTION_JOIN,
 		'user_id': user_id,
 		'room_id': room_id
 	})
 	var response = await _request_async(body)
-	_complete_join_room(user_id, room_id, response)
-	return OK
+	return _complete_join_room(user_id, response)
 
-func update_ice_candidate_async(user_id: String, media: String, index :int, ice_name: String) -> void:
+func send_ice_candidate_async(media: String, index :int, ice_name: String) -> int:
+	if _room == null:
+		_printer.err('no room when send_ice_candidate_async')
+		return FAILED
+	var local_user = _room.local_user
 	var body = JSON.stringify({
-		'action': 'update_ice',
-		'user_id': user_id,
+		'action': ACTION_SEND_ICE,
+		'user_id': local_user.user_id,
 		'ice_candidate': {
 			'media': media,
 			'index': index,
@@ -55,6 +75,20 @@ func update_ice_candidate_async(user_id: String, media: String, index :int, ice_
 		}
 	})
 	await _request_async(body)
+	return OK
+
+func send_offer_async(sdp: String) -> int:
+	if _room == null:
+		_printer.err('no room when send_offer_async')
+		return FAILED
+	var local_user = _room.local_user
+	var body = JSON.stringify({
+		'action': ACTION_SEND_OFFER,
+		'user_id': local_user.user_id,
+		'sdp': sdp
+	})
+	await _request_async(body)
+	return OK
 
 func _request_async(body) -> Response:
 	var req = ObjectPool.allocate_class(HTTPRequest)
@@ -65,25 +99,41 @@ func _request_async(body) -> Response:
 	ObjectPool.recycle(req)
 	return Response.new(result)
 
-func _complete_join_room(user_id: String, room_id: String, resp: Response) -> bool:
+func _complete_join_room(user_id: String, resp: Response) -> int:
 	if resp.status != HTTPRequest.RESULT_SUCCESS:
-		return false
+		return FAILED
 	if resp.response_code != 200:
 		return false
 	var body_str = resp.body.get_string_from_utf8()
 	_printer.p(body_str)
 	var dict = JSON.parse_string(body_str) as Dictionary
 	if dict == null:
-		return false
+		return FAILED
 	var err = dict.get('error')
 	if err != null:
 		_printer.err(err)
-		return false
+		return FAILED
+
+	var type_str = dict.get('connection_type')
+	match type_str:
+		"mesh":
+			_connection_type = ConnectionType.Mesh
+		"server":
+			_connection_type = ConnectionType.Server
+		"client":
+			_connection_type = ConnectionType.Client
+		_:
+			_connection_type = ConnectionType.None
 
 	var users_in_room = dict.get('users_in_room')
 	if not users_in_room:
 		_printer.err('no users in room')
-		return false
+		return FAILED
+
+	var room_id = dict.get('room_id')
+	if not room_id:
+		_printer.err('no room_id in response')
+		return FAILED
 
 	_room = Room.new()
 	_room.room_id = room_id
@@ -93,19 +143,26 @@ func _complete_join_room(user_id: String, room_id: String, resp: Response) -> bo
 		var user_in_room = User.new()
 		user_in_room.user_id = ret_user_id
 		user_in_room.player_id = player_id
+		user_in_room.actor = user.get('actor')
 		_room.users.append(user_in_room)
 
 		if ret_user_id == user_id:
 			_room.local_user = user_in_room
 
-	return true
-
-func get_local_user() -> Variant:
-	if not _room or not _room.local_user: return null
-	return _room.local_user
+	return OK
 
 func get_all_remote_peers() -> Array[User]:
 	return []
 
-func get_room() -> Room:
-	return _room
+func _send_heartbeat_async() -> void:
+	var body = JSON.stringify({
+		'action': ACTION_HEARTBEAT,
+		'user_id': _room.local_user.user_id,
+	})
+	await _request_async(body)
+
+func poll(delta: float) -> void:
+	"""
+	if _cooldown.process(delta):
+		_send_heartbeat_async()
+	"""
