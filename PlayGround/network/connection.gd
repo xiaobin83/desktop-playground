@@ -18,6 +18,7 @@ func set_local_user(local_user: LocalUser) -> void:
 	_printer = local_user.get_printer('Connection')
 	_signaling = Signaling.new()
 	_signaling.set_local_user(local_user)
+	add_child(_signaling)
 
 func start_connection_async(user_id: String, room_id: String) -> bool:
 	var err = await _signaling.join_room_async(user_id, room_id)
@@ -51,15 +52,9 @@ func start_connection_async(user_id: String, room_id: String) -> bool:
 				_printer.err('create_offer failed')
 				return false
 
-
-
-
 	get_tree().get_multiplayer().set_multiplayer_peer(_multi_peer)
 
 	return true
-
-func _process(delta: float) -> void:
-	_signaling.poll(delta)
 
 func _on_session_created(type: String, sdp: String) -> void:
 	_printer.p('_on_session_created', type, sdp)
@@ -69,7 +64,7 @@ func _on_session_created(type: String, sdp: String) -> void:
 		connection.set_local_description(type, sdp)
 	else:
 		connection.set_remote_description(type, sdp)
-	_signaling.send_offer_async(sdp)
+	_signaling.send_offer(sdp)
 
 func _on_ice_candidate_created(media: String, index: int, ice_name: String) -> void:
-	_signaling.send_ice_candidate_async(media, index, ice_name)
+	_signaling.send_ice_candidate(media, index, ice_name)

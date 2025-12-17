@@ -1,5 +1,5 @@
 class_name Signaling
-extends RefCounted
+extends Node
 
 enum ConnectionType { None, Mesh, Server, Client }
 enum Actor { Offerer, Answerer }
@@ -29,17 +29,42 @@ class Response:
 	var status: int
 	var response_code: int
 	var headers: PackedStringArray
-	var body: PackedByteArray
+	var body: String
+	var dict : Dictionary
 
 	func _init(result: Array) -> void:
 		status = result[0]
 		response_code = result[1]
 		headers = result[2]
-		body = result[3]
+		body = result[3].get_string_from_utf8()
+		dict = JSON.parse_string(body) as Dictionary
 
 var _room: Room
 var room: Room :
 	get: return _room
+
+class Request:
+	var _body: String
+	var _printer: Printer
+
+	signal completed(response: Response)
+
+	func _init(body_string: String, printer: Printer) -> void:
+		_body = body_string
+		_printer = printer
+
+	func send_async(signal_server: String):
+		var req = ObjectPool.allocate_class(HTTPRequest)
+		var headers = ["Content-Type: application/json"]
+		_printer.p("request: ", _body)
+		req.request(signal_server, headers, HTTPClient.METHOD_POST, _body)
+		var result = await req.request_completed
+		ObjectPool.recycle(req)
+		var response = Response.new(result)
+		_printer.p("response: ", response.response_code, response.body)
+		completed.emit(response)
+
+var _request_queue: Array[Request] = []
 
 var _printer: Printer = Printer.new('Signaling')
 var _cooldown = Cooldown.new(10.0)
@@ -47,6 +72,17 @@ var _cooldown = Cooldown.new(10.0)
 var _connection_type: ConnectionType = ConnectionType.None
 var connection_type: ConnectionType :
 	get: return _connection_type
+
+func _ready() -> void:
+	_serve_async()
+
+func _serve_async() -> void:
+	while true:
+		if _request_queue.size() > 0:
+			var request = _request_queue.pop_front()
+			await request.send_async(_signal_server)
+		else:
+			await get_tree().process_frame
 
 func set_local_user(local_user: LocalUser) -> void:
 	_printer = local_user.get_printer('Signaling')
@@ -57,12 +93,13 @@ func join_room_async(user_id: String, room_id: String) -> int:
 		'user_id': user_id,
 		'room_id': room_id
 	})
-	var response = await _request_async(body)
+	var request = _queue_request(body)
+	var response = await request.completed
 	return _complete_join_room(user_id, response)
 
-func send_ice_candidate_async(media: String, index :int, ice_name: String) -> int:
+func send_ice_candidate(media: String, index :int, ice_name: String) -> int:
 	if _room == null:
-		_printer.err('no room when send_ice_candidate_async')
+		_printer.err('no room when send_ice_candidate')
 		return FAILED
 	var local_user = _room.local_user
 	var body = JSON.stringify({
@@ -74,12 +111,12 @@ func send_ice_candidate_async(media: String, index :int, ice_name: String) -> in
 			'ice_name': ice_name
 		}
 	})
-	await _request_async(body)
+	_queue_request(body)
 	return OK
 
-func send_offer_async(sdp: String) -> int:
+func send_offer(sdp: String) -> int:
 	if _room == null:
-		_printer.err('no room when send_offer_async')
+		_printer.err('no room when send_offer')
 		return FAILED
 	var local_user = _room.local_user
 	var body = JSON.stringify({
@@ -87,28 +124,18 @@ func send_offer_async(sdp: String) -> int:
 		'user_id': local_user.user_id,
 		'sdp': sdp
 	})
-	await _request_async(body)
+	_queue_request(body)
 	return OK
-
-func _request_async(body) -> Response:
-	var req = ObjectPool.allocate_class(HTTPRequest)
-	var headers = ["Content-Type: application/json"]
-	_printer.p('request %s' % body)
-	req.request(_signal_server, headers, HTTPClient.METHOD_POST, body)
-	var result = await req.request_completed
-	ObjectPool.recycle(req)
-	return Response.new(result)
 
 func _complete_join_room(user_id: String, resp: Response) -> int:
 	if resp.status != HTTPRequest.RESULT_SUCCESS:
 		return FAILED
 	if resp.response_code != 200:
 		return false
-	var body_str = resp.body.get_string_from_utf8()
-	_printer.p(body_str)
-	var dict = JSON.parse_string(body_str) as Dictionary
-	if dict == null:
-		return FAILED
+
+	var dict = resp.dict
+	if dict == null: return FAILED
+
 	var err = dict.get('error')
 	if err != null:
 		_printer.err(err)
@@ -159,10 +186,9 @@ func _send_heartbeat_async() -> void:
 		'action': ACTION_HEARTBEAT,
 		'user_id': _room.local_user.user_id,
 	})
-	await _request_async(body)
+	_queue_request(body)
 
-func poll(delta: float) -> void:
-	"""
-	if _cooldown.process(delta):
-		_send_heartbeat_async()
-	"""
+func _queue_request(body: String) -> Request:
+	var request = Request.new(body, _printer)
+	_request_queue.append(request)
+	return request
