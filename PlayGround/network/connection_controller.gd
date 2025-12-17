@@ -9,6 +9,8 @@ extends Node
 var _local_user :LocalUser
 var _printer :Printer = Printer.new('ConnectionController')
 
+@onready var _container = $Container
+
 # called in _enter_tree
 func set_local_user(local_user: LocalUser) -> void:
 	_local_user = local_user
@@ -21,6 +23,9 @@ func _ready() -> void:
 	_simulate_player_label.text = _local_user.get_user_name()
 	_btn_connect.pressed.connect(_on_btn_connect_pressed)
 	_exclude_from_mouse_pass_through(_root_control)
+
+	var value = Utils.get_enum_value(SimulatePlayer.SimulatedPlayer, _local_user.get_user_name())
+	_container.position = Vector2(20 + value * 500, 20)
 
 func _exclude_from_mouse_pass_through(control: Control) -> void:
 	if not control: return

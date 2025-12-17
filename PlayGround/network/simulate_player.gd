@@ -1,11 +1,18 @@
+class_name SimulatePlayer
 extends Node
 
-enum SimulatePlayer {
-	PlayerA, PlayerB
+enum SimulatedPlayer {
+	PlayerA = 0, PlayerB
 }
 
-@export var _simulate_player := SimulatePlayer.PlayerA
+@export var _simulate_player := SimulatedPlayer.PlayerA
 
 func _enter_tree() -> void:
-	var local_user = LocalUser.create_local_user(Utils.get_enum_name(SimulatePlayer, _simulate_player))
+	var args = OS.get_cmdline_args()
+	var dict = Utils.parse_args(args)
+	var simulate_player = dict.get('simulate-player', null)
+	var player = Utils.get_enum_value(SimulatedPlayer, simulate_player)
+	if player != null:
+		_simulate_player = player
+	var local_user = LocalUser.create_local_user(Utils.get_enum_name(SimulatedPlayer, _simulate_player))
 	$ConnectionController.set_local_user(local_user)
