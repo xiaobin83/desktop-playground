@@ -12,7 +12,7 @@
 			"debug_collisions": false,
 			"debug_paths": false,
 			"debug_navigation": false,
-			"additional_options": "--simulate-player=PlayerA"
+			"additional_options": "--simulate-player=PlayerA",
 		},
 		{
 			"name": "GDScript: Launch Project B",

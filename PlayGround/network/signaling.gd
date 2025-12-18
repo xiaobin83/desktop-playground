@@ -13,7 +13,10 @@ const ACTION_JOIN := "join"
 const ACTION_SEND_ICE := "send_ice"
 const ACTION_SEND_OFFER := "send_offer"
 
+var _regex_user_id_with_nm := Utils.create_regex(r'^(\w+):(\w+)$')
+
 class User:
+	var user_nm :String # name space
 	var user_id :String
 	var player_id :int
 	var actor :Actor
@@ -165,16 +168,20 @@ func _complete_join_room(user_id: String, resp: Response) -> int:
 	_room = Room.new()
 	_room.room_id = room_id
 	for user in users_in_room:
-		var ret_user_id = user.get('user_id') as String
+		var user_id_with_nm = user.get('user_id') as String
 		var player_id = user.get('player_id')
 		var user_in_room = User.new()
-		user_in_room.user_id = ret_user_id
+		user_in_room.user_id = user_id_with_nm
 		user_in_room.player_id = player_id
-		user_in_room.actor = user.get('actor')
+		user_in_room.actor = Utils.get_enum_value(Actor, user.get('actor'))
 		_room.users.append(user_in_room)
 
-		if ret_user_id == user_id:
-			_room.local_user = user_in_room
+		var match = _regex_user_id_with_nm.search(user_id_with_nm)
+		if match:
+			user_in_room.user_nm = match.get_string(1)
+			user_in_room.user_id = match.get_string(2)
+			if user_in_room.user_id == user_id:
+				_room.local_user = user_in_room
 
 	return OK
 

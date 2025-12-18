@@ -5,7 +5,6 @@ const UNKNOWN_ENUM_VALUE = &'unknown_enum_value'
 static var _enum_map := {}
 static var _enum_reverse_map = {}
 
-
 static func _get_enum_map(e: Dictionary) -> Dictionary:
 	if e in _enum_map: return _enum_map.get(e)
 	var map = {}
@@ -16,7 +15,7 @@ static func _get_enum_map(e: Dictionary) -> Dictionary:
 static func _get_enum_reverse_map(e: Dictionary) -> Dictionary:
 	if e in _enum_reverse_map: return _enum_reverse_map.get(e)
 	var map = {}
-	for key in e: map[key] = int(e[key])
+	for key in e: map[key.to_lower()] = int(e[key])
 	_enum_reverse_map[e] = map
 	return map
 
@@ -24,7 +23,7 @@ static func get_enum_name(e: Dictionary, enum_value) -> StringName:
 	return _get_enum_map(e).get(enum_value, UNKNOWN_ENUM_VALUE)
 
 static func get_enum_value(e: Dictionary, enum_name: String) -> Variant:
-	return _get_enum_reverse_map(e).get(enum_name, null)
+	return _get_enum_reverse_map(e).get(enum_name.to_lower(), null)
 
 static func parse_args(args: Array[String]) -> Dictionary:
 	var result = {}
@@ -52,3 +51,11 @@ static func try_parse_int(s: String) -> Variant:
 	if clean.match(r"^-?\d+$"):
 		return int(clean)
 	return null
+
+static func create_regex(pattern: String) -> RegEx:
+	var regex = RegEx.new()
+	var error = regex.compile(pattern)
+	if error != OK:
+		push_error('Failed to compile regex pattern: %s' % pattern)
+		return null
+	return regex

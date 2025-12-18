@@ -1,18 +1,21 @@
 class_name Connection
 extends Node
 
-const DATA_CHANNEL := &'date_channel'
-const DATA_CHANNEL_ID := 1
-
-const DATA_CHANNEL_DESC := {
+const RELIABLE_DATA_CHANNEL := &'reliable_date_channel'
+const RELIABLE_DATA_CHANNEL_ID := 1
+const RELIABLE_DATA_CHANNEL_DESC := {
 	'negotiated': true,
-	'id': DATA_CHANNEL_ID
+	'id': RELIABLE_DATA_CHANNEL_ID
 }
 
 var _multi_peer := WebRTCMultiplayerPeer.new()
 var _signaling: Signaling
 
 var _printer: Printer = Printer.new('Connection')
+
+var _is_established := false
+var is_established: bool :
+	get: return _is_established
 
 func set_local_user(local_user: LocalUser) -> void:
 	_printer = local_user.get_printer('Connection')
@@ -43,7 +46,7 @@ func start_connection_async(user_id: String, room_id: String) -> bool:
 	var local_peer_id = local_user.player_id
 	_multi_peer.add_peer(local_peer, local_peer_id)
 
-	local_peer.create_data_channel(DATA_CHANNEL, DATA_CHANNEL_DESC)
+	local_peer.create_data_channel(RELIABLE_DATA_CHANNEL, RELIABLE_DATA_CHANNEL_DESC)
 
 	if _signaling.connection_type == Signaling.ConnectionType.Mesh:
 		if _signaling.room.local_user.actor == Signaling.Actor.Offerer:
@@ -53,6 +56,8 @@ func start_connection_async(user_id: String, room_id: String) -> bool:
 				return false
 
 	get_tree().get_multiplayer().set_multiplayer_peer(_multi_peer)
+
+	_is_established = true
 
 	return true
 

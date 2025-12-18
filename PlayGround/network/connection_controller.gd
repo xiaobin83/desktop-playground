@@ -40,9 +40,14 @@ func _notify_mouse_entered_and_exited(control)  -> void:
 	control.mouse_exited.connect(_on_mouse_exited.bind(control))
 
 func _on_btn_connect_pressed() -> void:
-	print("start connection ...")
+	if _conn.is_established:
+		_printer.err('already connected')
+		return
+	_printer.p("start connection ...")
+	_btn_connect.text = "Connecting..."
 	await _conn.start_connection_async(_local_user.get_user_id(), _text_room_id.text)
-	print('connected')
+	_printer.p('connected')
+	_btn_connect.text = "Connected"
 
 func _on_mouse_entered(control) -> void:
 	PlayerInput.notify_mouse_enter_control(control)
