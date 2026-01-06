@@ -23,6 +23,15 @@
 			"debug_paths": false,
 			"debug_navigation": false,
 			"additional_options": "--simulate-player=PlayerB"
+		},
+		{
+			"name": "Start Training",
+			"type": "debugpy",
+			"request": "launch",
+			"program": "${workspaceFolder}/godot-rl-agents/train.py",
+			"cwd": "${workspaceFolder}/godot-rl-agents",
+			"console": "integratedTerminal",
+			"justMyCode": false,
 		}
 	]
 }
