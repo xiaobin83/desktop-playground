@@ -11,22 +11,25 @@ signal on_peer_joined(user: User)
 const ACTION_HEARTBEAT := "heartbeat"
 const ACTION_JOIN := "join"
 const ACTION_SEND_ICE := "send_ice"
-const ACTION_SEND_OFFER := "send_offer"
+const ACTION_SEND_SDP := "send_sdp"
 
-var _regex_user_id_with_nm := Utils.create_regex(r'^(\w+):(\w+)$')
+class IceCandidate:
+	var media: String
+	var index: int
+	var name: String
 
 class User:
-	var user_nm :String # name space
-	var user_id :String
-	var player_id :int
-	var actor :Actor
+	var full_user_id: String # name space
+	var user_id: String
+	var player_id: int
+	var sdp: String
+	var ice_candidates: Array[IceCandidate] = []
+
 class Room:
 	var room_id :String
 	var users :Array[User] = []
 	var local_user: User
-
-	func has_only_one_user() -> bool:
-		return users.size() == 1
+	var just_created: bool 
 
 class Response:
 	var status: int
@@ -40,7 +43,8 @@ class Response:
 		response_code = result[1]
 		headers = result[2]
 		body = result[3].get_string_from_utf8()
-		dict = JSON.parse_string(body) as Dictionary
+		if response_code == 200:
+			dict = JSON.parse_string(body) as Dictionary
 
 var _room: Room
 var room: Room :
@@ -70,7 +74,6 @@ class Request:
 var _request_queue: Array[Request] = []
 
 var _printer: Printer = Printer.new('Signaling')
-var _cooldown = Cooldown.new(10.0)
 
 var _connection_type: ConnectionType = ConnectionType.None
 var connection_type: ConnectionType :
@@ -117,13 +120,10 @@ func send_ice_candidate(media: String, index :int, ice_name: String) -> int:
 	_queue_request(body)
 	return OK
 
-func send_offer(sdp: String) -> int:
-	if _room == null:
-		_printer.err('no room when send_offer')
-		return FAILED
+func send_sdp(sdp: String) -> int:
 	var local_user = _room.local_user
 	var body = JSON.stringify({
-		'action': ACTION_SEND_OFFER,
+		'action': ACTION_SEND_SDP,
 		'user_id': local_user.user_id,
 		'sdp': sdp
 	})
@@ -164,24 +164,27 @@ func _complete_join_room(user_id: String, resp: Response) -> int:
 	if not room_id:
 		_printer.err('no room_id in response')
 		return FAILED
-
+		
 	_room = Room.new()
 	_room.room_id = room_id
+	_room.just_created = dict.get('just_created')
 	for user in users_in_room:
-		var user_id_with_nm = user.get('user_id') as String
-		var player_id = user.get('player_id')
 		var user_in_room = User.new()
-		user_in_room.user_id = user_id_with_nm
-		user_in_room.player_id = player_id
-		user_in_room.actor = Utils.get_enum_value(Actor, user.get('actor'))
+		user_in_room.full_user_id = user.get('full_user_id')
+		user_in_room.user_id = user.get('user_id')
+		user_in_room.player_id = user.get('player_id')
+		user_in_room.sdp = user.get('sdp')
+		for ice_candidate in user.get('ice_candidates'):
+			var ice_candidate_in_room = IceCandidate.new()
+			ice_candidate_in_room.media = ice_candidate.get('media')
+			ice_candidate_in_room.index = ice_candidate.get('index')
+			ice_candidate_in_room.name = ice_candidate.get('ice_name')
+			user_in_room.ice_candidates.append(ice_candidate_in_room)
+
 		_room.users.append(user_in_room)
 
-		var match = _regex_user_id_with_nm.search(user_id_with_nm)
-		if match:
-			user_in_room.user_nm = match.get_string(1)
-			user_in_room.user_id = match.get_string(2)
-			if user_in_room.user_id == user_id:
-				_room.local_user = user_in_room
+		if user_id == user_in_room.user_id:
+			_room.local_user = user_in_room
 
 	return OK
 

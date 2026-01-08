@@ -36,24 +36,30 @@ func start_connection_async(user_id: String, room_id: String) -> bool:
 		_multi_peer.create_client(_signaling.room.local_user.player_id)
 
 	# connected
-	var local_peer = WebRTCPeerConnection.new()
-	local_peer.session_description_created.connect(_on_session_created)
-	local_peer.ice_candidate_created.connect(_on_ice_candidate_created)
-	local_peer.initialize({
-		"iceServers": [{"urls": ["stun:stun.l.google.com:19302"]}]
-	})
-	var local_user = _signaling.room.local_user
-	var local_peer_id = local_user.player_id
-	_multi_peer.add_peer(local_peer, local_peer_id)
-
-	local_peer.create_data_channel(RELIABLE_DATA_CHANNEL, RELIABLE_DATA_CHANNEL_DESC)
-
 	if _signaling.connection_type == Signaling.ConnectionType.Mesh:
-		if _signaling.room.local_user.actor == Signaling.Actor.Offerer:
-			err = local_peer.create_offer()
+		if _signaling.room.contains_only_local_user():
+			var peer = WebRTCPeerConnection.new()
+			peer.create_data_channel(RELIABLE_DATA_CHANNEL, RELIABLE_DATA_CHANNEL_DESC)
+			_multi_peer.add_peer(peer, _signaling.room.local_user.player_id)
+			peer.session_description_created.connect(_on_session_created.bind(_signaling.room.local_user.player_id))
+			peer.ice_candidate_created.connect(_on_ice_candidate_created)
+			peer.initialize({
+				"iceServers": [{"urls": ["stun:stun.l.google.com:19302"]}]
+			})
+			err = peer.create_offer()
 			if err != OK:
 				_printer.err('create_offer failed')
 				return false
+
+		for user in _signaling.room.users:
+			if user != _signaling.room.local_user:
+				# create peer of others
+				var peer = WebRTCPeerConnection.new()
+				peer.create_data_channel(RELIABLE_DATA_CHANNEL, RELIABLE_DATA_CHANNEL_DESC)
+				peer.session_description_created.connect(_on_session_created.bind(user.player_id))
+				peer.set_remote_description('offer', user.sdp)
+				for ice_candidate in user.ice_candidates:
+					peer.add_ice_candidate(ice_candidate.media, ice_candidate.index, ice_candidate.name)
 
 	get_tree().get_multiplayer().set_multiplayer_peer(_multi_peer)
 
@@ -61,15 +67,13 @@ func start_connection_async(user_id: String, room_id: String) -> bool:
 
 	return true
 
-func _on_session_created(type: String, sdp: String) -> void:
+func _on_session_created(type: String, sdp: String, player_id: int) -> void:
 	_printer.p('_on_session_created', type, sdp)
-	var peer = _multi_peer.get_peer(_signaling.room.local_user.player_id)
+	var peer = _multi_peer.get_peer(player_id)
 	var connection = peer.connection
+	connection.set_local_description(type, sdp)
 	if type == 'offer':
-		connection.set_local_description(type, sdp)
-	else:
-		connection.set_remote_description(type, sdp)
-	_signaling.send_offer(sdp)
+		_signaling.send_sdp(sdp)
 
 func _on_ice_candidate_created(media: String, index: int, ice_name: String) -> void:
 	_signaling.send_ice_candidate(media, index, ice_name)
